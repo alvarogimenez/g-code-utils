@@ -1,11 +1,11 @@
 package com.gomezgimenez.gcode.utils.model
 
-import com.gomezgimenez.gcode.utils.services.GCode
-import com.gomezgimenez.gcode.utils.{Frame, Point, Segment}
+import com.gomezgimenez.gcode.utils.entities.{Frame, Point, Segment}
+import com.gomezgimenez.gcode.utils.services.GCodeService
 import javafx.beans.property.{SimpleDoubleProperty, SimpleObjectProperty, SimpleStringProperty}
 import javafx.beans.{InvalidationListener, Observable}
 
-case class DataModel() {
+case class DataModel(gCodeService: GCodeService) {
   val originalTopLeftPoint = new SimpleObjectProperty[Option[Point]](Some(Point(0,0)))
   val originalTopRightPoint = new SimpleObjectProperty[Option[Point]](Some(Point(0,0)))
   val originalBottomLeftPoint = new SimpleObjectProperty[Option[Point]](Some(Point(0,0)))
@@ -57,7 +57,7 @@ case class DataModel() {
       Frame(topLeft, topRight, bottomLeft, bottomRight)
     })
     calculatedCenter.set(avgCenter)
-    calculatedRotationStdDeviation.set(avgRotation.getOrElse(0.0))
+    calculatedRotationStdDeviation.set(avgRotation.map(_._2).map(Math.toDegrees).getOrElse(0.0))
   }
 
   def transpose(): Unit = {
@@ -66,14 +66,14 @@ case class DataModel() {
       avgCenter <- avgCenter
       avgRotation <- avgRotation
     } yield {
-      val gCode = GCode.transformGCode(originalGCodeData.get, avgCenter.x, avgCenter.y, avgRotation)
-        (gCode, GCode.gCodeToSegments(gCode))
+      val gCode = gCodeService.transformGCode(originalGCodeData.get, avgCenter.x, avgCenter.y, avgRotation._1)
+        (gCode, gCodeService.gCodeToSegments(gCode))
     }).getOrElse((List.empty[String], List.empty[Segment]))
     transposedGCodeData.set(_transposedGCodeData)
     transposedGCodeSegments.set(_transposedGCodeSegments)
   }
 
-  def avgCenter: Option[Point] = {
+  private def avgCenter: Option[Point] = {
     for {
       measuredFrame <- measuredFrame.get
     } yield {
@@ -91,10 +91,11 @@ case class DataModel() {
     }
   }
 
-  def avgRotation: Option[Double] = {
+  private def avgRotation: Option[(Double, Double)] = {
     for {
       measuredFrame <- measuredFrame.get
       originalFrame <- originalFrame.get
+      avgCenter <- avgCenter
     } yield {
       val original_x1 = originalFrame.topLeft.x
       val original_y1 = originalFrame.topLeft.y
@@ -116,14 +117,21 @@ case class DataModel() {
       val measured_y3 = measuredFrame.topRight.y
       val measured_x4 = measuredFrame.bottomLeft.x
       val measured_y4 = measuredFrame.bottomLeft.y
-      val measured_r1 = Math.atan2(measured_y1, measured_x1)
-      val measured_r2 = Math.atan2(measured_y2, measured_x2)
-      val measured_r3 = Math.atan2(measured_y3, measured_x3)
-      val measured_r4 = Math.atan2(measured_y4, measured_x4)
-      ((measured_r1 - original_r1) +
-        (measured_r2 - original_r2) +
-        (measured_r3 - original_r3) +
-        (measured_r4 - original_r4)) / 4.0
+      val measured_r1 = Math.atan2(measured_y1 - avgCenter.y, measured_x1 - avgCenter.x)
+      val measured_r2 = Math.atan2(measured_y2 - avgCenter.y, measured_x2 - avgCenter.x)
+      val measured_r3 = Math.atan2(measured_y3 - avgCenter.y, measured_x3 - avgCenter.x)
+      val measured_r4 = Math.atan2(measured_y4 - avgCenter.y, measured_x4 - avgCenter.x)
+      val measures = List(
+        (measured_r1 - original_r1),
+        (measured_r2 - original_r2),
+        (measured_r3 - original_r3),
+        (measured_r4 - original_r4))
+
+      val mean = measures.sum / measures.size
+      val variance = measures.map(m => Math.pow(m - mean,2)).sum / measures.size
+      val stdDeviation = Math.sqrt(variance)
+
+      (mean, stdDeviation)
     }
   }
 }

@@ -3,11 +3,11 @@ package com.gomezgimenez.gcode.utils.services
 import java.io.File
 import java.util.Locale
 
-import com.gomezgimenez.gcode.utils.{Point, Segment}
+import com.gomezgimenez.gcode.utils.entities.{Point, Segment}
 
 import scala.io.Source
 
-object GCode {
+case class GCodeService() {
   val G00_XY = """G00 X([0-9.\-]+) Y([0-9.\-]+)""".r
   val G01_XY = """G01 X([0-9.\-]+) Y([0-9.\-]+)""".r
 
@@ -16,7 +16,7 @@ object GCode {
     val gCode =
       source
         .getLines()
-      .toList
+        .toList
     source.close()
     gCode
   }
@@ -25,28 +25,24 @@ object GCode {
     gCode: List[String],
     dx: Double,
     dy: Double,
-    r: Double): List[String] = {
+    r: Double
+  ): List[String] = {
     gCode
-        .map {
-          case G00_XY(x, y) =>
-            val p = Point(x.toDouble, y.toDouble).rotate(r, Point(dx, dy)).translate(dx, dy)
-            val tLine = s"G00 X${String.format(Locale.US, "%.3f", p.x)} " +
+      .map {
+        case G00_XY(x, y) =>
+          val p = Point(x.toDouble, y.toDouble).rotate(r, Point(dx, dy)).translate(dx, dy)
+          val tLine =
+            s"G00 X${String.format(Locale.US, "%.3f", p.x)} " +
               s"Y${String.format(Locale.US, "%.3f", p.y)}"
-            tLine
-          case G01_XY(x, y) =>
-            val p = Point(x.toDouble, y.toDouble).rotate(r, Point(dx, dy)).translate(dx, dy)
-            val tLine = s"G01 X${String.format(Locale.US, "%.3f", p.x)} " +
+          tLine
+        case G01_XY(x, y) =>
+          val p = Point(x.toDouble, y.toDouble).rotate(r, Point(dx, dy)).translate(dx, dy)
+          val tLine =
+            s"G01 X${String.format(Locale.US, "%.3f", p.x)} " +
               s"Y${String.format(Locale.US, "%.3f", p.y)}"
-            tLine
-          case line => line
-        }
-  }
-
-  def gCodeToSegments(file: File): List[Segment] = {
-    val source = Source.fromFile(file)
-    val segments = gCodeToSegments(source.getLines().toList)
-    source.close()
-    segments
+          tLine
+        case line => line
+      }
   }
 
   def gCodeToSegments(gCode: List[String]): List[Segment] = {

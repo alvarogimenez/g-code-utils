@@ -5,7 +5,6 @@ target
 
 # Worksheets (Eclipse or IntelliJ)
 *.sc
-*.nc
 
 # IntelliJ
 .idea
@@ -13,3 +12,6 @@ target
 
 # Build Server Protocol
 .bsp
+
+#Other
+*.nc

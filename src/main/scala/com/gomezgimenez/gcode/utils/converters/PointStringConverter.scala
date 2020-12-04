@@ -1,6 +1,6 @@
 package com.gomezgimenez.gcode.utils.converters
 
-import com.gomezgimenez.gcode.utils.Point
+import com.gomezgimenez.gcode.utils.entities.Point
 import javafx.util.StringConverter
 
 class PointStringConverter extends StringConverter[Option[Point]] {

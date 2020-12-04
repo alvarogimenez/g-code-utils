@@ -1,22 +1,18 @@
 package com.gomezgimenez.gcode.utils.components
 
+import com.gomezgimenez.gcode.utils.entities.{BoundingBox, Point, Segment}
 import com.gomezgimenez.gcode.utils.model.DataModel
-import com.gomezgimenez.gcode.utils.{BoundingBox, Point, Segment}
-import javafx.beans.{InvalidationListener, Observable}
 import javafx.scene.canvas.{Canvas, GraphicsContext}
-import javafx.scene.layout.Pane
+import javafx.scene.layout.{Border, BorderStroke, BorderStrokeStyle, Pane}
 import javafx.scene.paint.Color
 
 case class GCodePlot(model: DataModel) extends Pane {
+  setBorder(new Border(new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, null, null)))
+
   val canvas = new Canvas(getWidth, getHeight)
   getChildren.add(canvas)
-
-  canvas.widthProperty().addListener(new InvalidationListener() {
-    override def invalidated(observable: Observable): Unit = draw()
-  })
-  canvas.heightProperty().addListener(new InvalidationListener() {
-    override def invalidated(observable: Observable): Unit = draw()
-  })
+  canvas.widthProperty().addListener(_ => draw())
+  canvas.heightProperty().addListener(_ => draw())
 
   override def layoutChildren(): Unit = {
     super.layoutChildren()
@@ -26,23 +22,15 @@ case class GCodePlot(model: DataModel) extends Pane {
     canvas.setHeight(snapSize(getHeight) - snappedTopInset() - snappedBottomInset())
   }
 
-  model.originalFrame.addListener(new InvalidationListener {
-    override def invalidated(observable: Observable): Unit = draw()
-  })
-  model.measuredFrame.addListener(new InvalidationListener {
-    override def invalidated(observable: Observable): Unit = draw()
-  })
-  model.originalGCodeSegments.addListener(new InvalidationListener {
-    override def invalidated(observable: Observable): Unit = draw()
-  })
-  model.transposedGCodeSegments.addListener(new InvalidationListener {
-    override def invalidated(observable: Observable): Unit = draw()
-  })
+  model.originalFrame.addListener(_ => draw())
+  model.measuredFrame.addListener(_ => draw())
+  model.originalGCodeSegments.addListener(_ => draw())
+  model.transposedGCodeSegments.addListener(_ => draw())
 
   private def draw(): Unit = {
     val g2d = canvas.getGraphicsContext2D
-    g2d.clearRect(0, 0, getWidth, getHeight)
-    g2d.setStroke(Color.BLACK)
+    g2d.setFill(Color.WHITE)
+    g2d.fillRect(0, 0, getWidth, getHeight)
 
     val boundingBox =
       (model.originalFrame.get.map(_.segments).getOrElse(List.empty) ++
@@ -50,7 +38,7 @@ case class GCodePlot(model: DataModel) extends Pane {
         model.originalGCodeSegments.get ++
         model.transposedGCodeSegments.get)
         .map(_.boundingBox)
-        .foldLeft(BoundingBox(0,10,10,0))((a, b) => a.greater(b))
+        .foldLeft(BoundingBox(0, 10, 10, 0))((a, b) => a.greater(b))
         .margin(1)
 
     g2d.setStroke(Color.CYAN.darker())
@@ -85,9 +73,9 @@ case class GCodePlot(model: DataModel) extends Pane {
     val heightRatio = getHeight / b.height
     val ratio = Math.min(widthRatio, heightRatio)
 
-    val x1 = (p.x - b.left) / (b.right - b.left) * b.width*ratio
-    val y1 = (p.y - b.bottom) / (b.top - b.bottom) * b.height*ratio
-    Point(x1 + (getWidth - b.width*ratio)/2, getHeight - y1 - (getHeight - b.height*ratio)/2)
+    val x1 = (p.x - b.left) / (b.right - b.left) * b.width * ratio
+    val y1 = (p.y - b.bottom) / (b.top - b.bottom) * b.height * ratio
+    Point(x1 + (getWidth - b.width * ratio) / 2, getHeight - y1 - (getHeight - b.height * ratio) / 2)
   }
 
   private def drawSegment(

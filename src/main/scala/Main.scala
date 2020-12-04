@@ -1,29 +1,31 @@
-import com.gomezgimenez.gcode.utils.{Context, Util}
+import com.gomezgimenez.gcode.utils.Util
+import com.gomezgimenez.gcode.utils.controller.MainWindowController
+import com.gomezgimenez.gcode.utils.model.DataModel
+import com.gomezgimenez.gcode.utils.services.GCodeService
 import javafx.application.{Application, Platform}
-import javafx.event.EventHandler
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
 import javafx.scene.layout.BorderPane
-import javafx.stage.{Stage, WindowEvent}
+import javafx.stage.Stage
 
 class Main extends Application {
-  override def start(primaryStage: Stage): Unit = {
-    val loader = new FXMLLoader()
-    loader.setLocation(Thread.currentThread.getContextClassLoader.getResource("ui/view/MainWindow.fxml"))
-    Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA)
-    val rootLayout = loader.load().asInstanceOf[BorderPane]
+  private val gCodeService = GCodeService()
+  private val model = DataModel(gCodeService)
 
-    Context.primaryStage = primaryStage
-    primaryStage.setOnCloseRequest(new EventHandler[WindowEvent]() {
-      override def handle(event: WindowEvent): Unit = {
-        Platform.exit()
-      }
-    })
+  override def start(primaryStage: Stage): Unit = {
+    Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA)
+
+    val loader = new FXMLLoader()
+    loader.setControllerFactory(_ => MainWindowController(primaryStage, gCodeService, model))
+    loader.setLocation(Thread.currentThread.getContextClassLoader.getResource("ui/view/MainWindow.fxml"))
+
+    val rootLayout = loader.load().asInstanceOf[BorderPane]
     val scene = new Scene(rootLayout, 800, 600)
     primaryStage.setScene(scene)
     primaryStage.setTitle(Util.windowTitle())
-    primaryStage.setMinWidth(800)
-    primaryStage.setMinHeight(600)
+    primaryStage.setMinWidth(scene.getWidth)
+    primaryStage.setMinHeight(scene.getHeight)
+    primaryStage.setOnCloseRequest(_ => Platform.exit())
     primaryStage.show()
   }
 }
