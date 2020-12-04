@@ -1,6 +1,6 @@
 package com.gomezgimenez.gcode.utils.model
 
-import com.gomezgimenez.gcode.utils.entities.{Frame, Point, Segment}
+import com.gomezgimenez.gcode.utils.entities.{Configuration, Frame, Point, Segment}
 import com.gomezgimenez.gcode.utils.services.GCodeService
 import javafx.beans.property.{SimpleDoubleProperty, SimpleObjectProperty, SimpleStringProperty}
 import javafx.beans.{InvalidationListener, Observable}

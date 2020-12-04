@@ -6,7 +6,7 @@ import com.gomezgimenez.gcode.utils.components.GCodePlot
 import com.gomezgimenez.gcode.utils.converters.PointStringConverter
 import com.gomezgimenez.gcode.utils.entities.{Frame, Point}
 import com.gomezgimenez.gcode.utils.model.DataModel
-import com.gomezgimenez.gcode.utils.services.GCodeService
+import com.gomezgimenez.gcode.utils.services.{ConfigService, GCodeService}
 import com.gomezgimenez.gcode.utils.Util
 import javafx.application.Platform
 import javafx.event.ActionEvent
@@ -20,6 +20,7 @@ import javafx.util.converter.NumberStringConverter
 case class MainWindowController(
   primaryStage: Stage,
   gCodeService: GCodeService,
+  configService: ConfigService,
   model: DataModel
 ) {
 
@@ -41,7 +42,7 @@ case class MainWindowController(
   @FXML var label_rotation_std_deviation: Label = _
 
   def initialize(): Unit = {
-    populateInitialDataFrames()
+    populateModelFromConfig()
 
     pane_canvas.setCenter(GCodePlot(model))
 
@@ -97,11 +98,13 @@ case class MainWindowController(
           gCode.foreach { line =>
             bw.write(line + "\n")
           }
+          bw.close()
         }
       }
     })
 
     menu_file_close.setOnAction((_: ActionEvent) => {
+      configService.saveConfiguration(configService.buildConfiguration(model))
       Platform.exit()
     })
 
@@ -110,28 +113,30 @@ case class MainWindowController(
     })
   }
 
-  private def populateInitialDataFrames(): Unit = {
-    model.originalTopLeftPoint.set(Some(Point(-25, 20)))
-    model.originalTopRightPoint.set(Some(Point(25, 20)))
-    model.originalBottomLeftPoint.set(Some(Point(-25, -20)))
-    model.originalBottomRightPoint.set(Some(Point(25, -20)))
-    model.originalFrame.set(Some(Frame(
-      topLeft = model.originalTopLeftPoint.get.get,
-      topRight = model.originalTopRightPoint.get.get,
-      bottomLeft = model.originalBottomLeftPoint.get.get,
-      bottomRight = model.originalBottomRightPoint.get.get
-    )))
-    val r = Math.toRadians(35)
-    val t = 0.7
-    model.measuredTopLeftPoint.set(Some(Point(-25, 20).rotate(r).translate(t, t)))
-    model.measuredTopRightPoint.set(Some(Point(25, 20).rotate(r).translate(t, t)))
-    model.measuredBottomLeftPoint.set(Some(Point(-25, -20).rotate(r).translate(t, t)))
-    model.measuredBottomRightPoint.set(Some(Point(25, -20).rotate(r).translate(t, t)))
-    model.measuredFrame.set(Some(Frame(
-      topLeft = model.measuredTopLeftPoint.get.get,
-      topRight = model.measuredTopRightPoint.get.get,
-      bottomLeft = model.measuredBottomLeftPoint.get.get,
-      bottomRight = model.measuredBottomRightPoint.get.get
-    )))
+  private def populateModelFromConfig(): Unit = {
+    configService.loadConfiguration.foreach { config =>
+      config.alignmentFrames.foreach { f =>
+        model.originalTopLeftPoint.set(Some(f.originalFrame.topLeft))
+        model.originalTopRightPoint.set(Some(f.originalFrame.topRight))
+        model.originalBottomLeftPoint.set(Some(f.originalFrame.bottomLeft))
+        model.originalBottomRightPoint.set(Some(f.originalFrame.bottomRight))
+        model.originalFrame.set(Some(Frame(
+          topLeft = model.originalTopLeftPoint.get.get,
+          topRight = model.originalTopRightPoint.get.get,
+          bottomLeft = model.originalBottomLeftPoint.get.get,
+          bottomRight = model.originalBottomRightPoint.get.get
+        )))
+        model.measuredTopLeftPoint.set(Some(f.measuredFrame.topLeft))
+        model.measuredTopRightPoint.set(Some(f.measuredFrame.topRight))
+        model.measuredBottomLeftPoint.set(Some(f.measuredFrame.bottomLeft))
+        model.measuredBottomRightPoint.set(Some(f.measuredFrame.bottomRight))
+        model.measuredFrame.set(Some(Frame(
+          topLeft = model.measuredTopLeftPoint.get.get,
+          topRight = model.measuredTopRightPoint.get.get,
+          bottomLeft = model.measuredBottomLeftPoint.get.get,
+          bottomRight = model.measuredBottomRightPoint.get.get
+        )))
+      }
+    }
   }
 }
