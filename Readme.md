@@ -38,7 +38,7 @@ Mechanical alignment systems may induce errors above 300-400um, enough to ruin t
 
     After turning the board the holes will be slightly out of the reference coordinates. This is due to rotation/displacement of the board during the manipulation and imperfections in the board edges. 
     
-    [IMG]
+    ![Step 5b](doc/ReadmeSteps05a.png)
 
     Align the drill with the center of each hole and register the measured position into the "Measured Frame" form:
     
