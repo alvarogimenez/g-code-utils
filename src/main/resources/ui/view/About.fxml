@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="389.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gomezgimenez.gcode.utils.controller.AboutController">
+   <center>
+      <AnchorPane prefHeight="235.0" prefWidth="382.0" styleClass="about" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="73.0" fitWidth="71.0" layoutX="24.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@/icon/favicon.png" />
+               </image></ImageView>
+            <Button fx:id="close_button" layoutX="314.0" layoutY="196.0" mnemonicParsing="false" text="Close" />
+            <Label layoutX="109.0" layoutY="26.0" text="G-Code Utils">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="109.0" layoutY="53.0" text="Álvaro Gómez Giménez" />
+            <Label layoutX="109.0" layoutY="79.0" text="http://gomezgimenez.com">
+               <font>
+                  <Font name="System Italic" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="24.0" layoutY="118.0" text="Version:">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="24.0" layoutY="146.0" text="Repository:">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="109.0" layoutY="118.0" text="1.0.0" />
+            <Label layoutX="108.0" layoutY="146.0" text="https://github.com/alvarogimenez/g-code-utils" />
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>

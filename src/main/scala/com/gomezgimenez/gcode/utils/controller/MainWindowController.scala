@@ -2,20 +2,25 @@ package com.gomezgimenez.gcode.utils.controller
 
 import java.io.{BufferedWriter, File, FileWriter}
 
+import com.gomezgimenez.gcode.utils.Util
 import com.gomezgimenez.gcode.utils.components.GCodePlot
 import com.gomezgimenez.gcode.utils.converters.PointStringConverter
-import com.gomezgimenez.gcode.utils.entities.{Frame, Point}
+import com.gomezgimenez.gcode.utils.entities.Frame
 import com.gomezgimenez.gcode.utils.model.DataModel
 import com.gomezgimenez.gcode.utils.services.{ConfigService, GCodeService}
-import com.gomezgimenez.gcode.utils.Util
 import javafx.application.Platform
 import javafx.event.ActionEvent
-import javafx.fxml.FXML
+import javafx.fxml.{FXML, FXMLLoader}
+import javafx.scene.Scene
 import javafx.scene.control.{Button, Label, MenuItem, TextField}
-import javafx.scene.layout.BorderPane
+import javafx.scene.layout.{BorderPane, StackPane}
+import javafx.scene.paint.Color
 import javafx.stage.FileChooser.ExtensionFilter
-import javafx.stage.Stage
+import javafx.stage.{Modality, Popup, Stage, StageStyle}
 import javafx.util.converter.NumberStringConverter
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 case class MainWindowController(
   primaryStage: Stage,
@@ -24,7 +29,10 @@ case class MainWindowController(
   model: DataModel
 ) {
 
+  @FXML var main_stack: StackPane = _
   @FXML var pane_canvas: BorderPane = _
+  @FXML var loading_overlay: BorderPane = _
+  @FXML var loading_label: Label = _
   @FXML var menu_file_close: MenuItem = _
   @FXML var menu_file_open: MenuItem = _
   @FXML var menu_file_save_as: MenuItem = _
@@ -46,6 +54,8 @@ case class MainWindowController(
 
     pane_canvas.setCenter(GCodePlot(model))
 
+    loading_overlay.setVisible(false)
+
     original_frame_top_left.textProperty().bindBidirectional(model.originalTopLeftPoint, new PointStringConverter())
     original_frame_top_right.textProperty().bindBidirectional(model.originalTopRightPoint, new PointStringConverter())
     original_frame_bottom_left.textProperty().bindBidirectional(model.originalBottomLeftPoint, new PointStringConverter())
@@ -61,19 +71,28 @@ case class MainWindowController(
     menu_file_open.setOnAction((_: ActionEvent) => {
       import javafx.stage.FileChooser
       val fileChooser = new FileChooser
-      fileChooser.setInitialDirectory(new File("."))
+      fileChooser.setInitialDirectory(model.lastDirectory.get)
       fileChooser.setTitle("Open G-Code File")
       fileChooser.getExtensionFilters.addAll(
         new ExtensionFilter("G-Code Files", "*.nc", "*.gcode"),
         new ExtensionFilter("All Files", "*.*"))
       val selectedFile = fileChooser.showOpenDialog(primaryStage)
       if (selectedFile != null) {
-        val gCode = gCodeService.readGCode(selectedFile)
-        model.originalFile.set(selectedFile.getAbsolutePath)
-        model.originalGCodeData.set(gCode)
-        model.originalGCodeSegments.set(gCodeService.gCodeToSegments(gCode))
-        model.transposedGCodeSegments.set(List.empty)
-        primaryStage.setTitle(Util.windowTitle(Some(selectedFile.getName)))
+        loading_overlay.setVisible(true)
+        loading_label.setText(s"""Loading file "${selectedFile.getName}"...""")
+        Future {
+          val gCode = gCodeService.readGCode(selectedFile)
+          val gCodeSegments = gCodeService.gCodeToSegments(gCode)
+          Platform.runLater(() => {
+            model.lastDirectory.set(new File(selectedFile.getParent))
+            model.originalFile.set(selectedFile.getAbsolutePath)
+            model.originalGCodeData.set(gCode)
+            model.originalGCodeSegments.set(gCodeSegments)
+            model.transposedGCodeSegments.set(List.empty)
+            primaryStage.setTitle(Util.windowTitle(Some(selectedFile.getName)))
+            loading_overlay.setVisible(false)
+          })
+        }
       }
     })
 
@@ -109,7 +128,32 @@ case class MainWindowController(
     })
 
     button_transpose.setOnAction((_: ActionEvent) => {
-      model.transpose()
+      loading_overlay.setVisible(true)
+      loading_label.setText(s"Performing transpose...")
+      model.transpose().foreach { _ =>
+        Platform.runLater(() => {
+          loading_overlay.setVisible(false)
+        })
+      }
+    })
+
+    menu_help_about.setOnAction((_: ActionEvent) => {
+      val stage = new Stage()
+
+      val loader = new FXMLLoader()
+      loader.setLocation(Thread.currentThread.getContextClassLoader.getResource("ui/view/About.fxml"))
+      loader.setControllerFactory(_ => AboutController(stage))
+
+      val scene = new Scene(loader.load().asInstanceOf[BorderPane])
+      scene.getStylesheets.add(getClass.getResource("/ui/style/main.css").toExternalForm)
+      scene.setFill(Color.TRANSPARENT)
+
+      stage.setScene(scene)
+      stage.setTitle("About")
+      stage.initModality(Modality.APPLICATION_MODAL)
+      stage.initStyle(StageStyle.UNDECORATED)
+      stage.initStyle(StageStyle.TRANSPARENT)
+      stage.show()
     })
   }
 

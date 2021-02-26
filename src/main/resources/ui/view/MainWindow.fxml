@@ -5,106 +5,127 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="main_panel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="480.0" minWidth="640.0" prefHeight="592.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gomezgimenez.gcode.utils.controller.MainWindowController">
-   <top>
-      <MenuBar BorderPane.alignment="CENTER">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem fx:id="menu_file_open" mnemonicParsing="false" text="Open..." />
-                <MenuItem fx:id="menu_file_save_as" mnemonicParsing="false" text="Save As..." />
-              <MenuItem fx:id="menu_file_close" mnemonicParsing="false" text="Close" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem fx:id="menu_help_about" mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-   </top>
-   <right>
-      <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
-         <children>
-            <TitledPane animated="false" collapsible="false" prefHeight="141.0" prefWidth="287.0" text="Original Frame">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
+<StackPane fx:id="main_panel" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gomezgimenez.gcode.utils.controller.MainWindowController">
+   <children>
+      <BorderPane minHeight="480.0" minWidth="640.0">
+         <top>
+            <MenuBar BorderPane.alignment="CENTER">
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem fx:id="menu_file_open" mnemonicParsing="false" text="Open..." />
+                      <MenuItem fx:id="menu_file_save_as" mnemonicParsing="false" text="Save As..." />
+                    <MenuItem fx:id="menu_file_close" mnemonicParsing="false" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem fx:id="menu_help_about" mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+         </top>
+         <right>
+            <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+               <children>
+                  <TitledPane animated="false" collapsible="false" prefHeight="141.0" prefWidth="287.0" text="Original Frame">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <children>
+                              <TextField fx:id="original_frame_top_left" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                              <TextField fx:id="original_frame_top_right" layoutX="174.0" layoutY="15.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                              <TextField fx:id="original_frame_bottom_right" layoutX="174.0" layoutY="68.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                              <TextField fx:id="original_frame_bottom_left" layoutX="14.0" layoutY="68.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                              <Separator layoutX="128.0" layoutY="22.0" prefHeight="10.0" prefWidth="30.0" />
+                              <Separator layoutX="128.0" layoutY="76.0" prefHeight="9.0" prefWidth="30.0" />
+                              <Separator layoutX="64.0" layoutY="43.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="5.0" />
+                              <Separator layoutX="226.0" layoutY="43.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="5.0" />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </TitledPane>
+                  <TitledPane animated="false" collapsible="false" prefHeight="141.0" prefWidth="288.0" text="Measured Frame">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <opaqueInsets>
+                                <Insets />
+                            </opaqueInsets>
+                            <children>
+                                <TextField fx:id="measured_frame_top_left" layoutX="14.0" layoutY="14.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                                <TextField fx:id="measured_frame_top_right" layoutX="174.0" layoutY="15.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                                <TextField fx:id="measured_frame_bottom_right" layoutX="174.0" layoutY="68.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                                <TextField fx:id="measured_frame_bottom_left" layoutX="14.0" layoutY="68.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                                <Separator layoutX="128.0" layoutY="22.0" prefHeight="10.0" prefWidth="30.0" />
+                                <Separator layoutX="128.0" layoutY="76.0" prefHeight="9.0" prefWidth="30.0" />
+                                <Separator layoutX="64.0" layoutY="43.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="5.0" />
+                                <Separator layoutX="226.0" layoutY="43.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="5.0" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                  </TitledPane>
+                  <AnchorPane prefHeight="46.0" prefWidth="288.0">
                      <children>
-                        <TextField fx:id="original_frame_top_left" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
-                        <TextField fx:id="original_frame_top_right" layoutX="174.0" layoutY="15.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
-                        <TextField fx:id="original_frame_bottom_right" layoutX="174.0" layoutY="68.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
-                        <TextField fx:id="original_frame_bottom_left" layoutX="14.0" layoutY="68.0" prefWidth="105.0" text="(0.00, 0.00)" />
-                        <Separator layoutX="128.0" layoutY="22.0" prefHeight="10.0" prefWidth="30.0" />
-                        <Separator layoutX="128.0" layoutY="76.0" prefHeight="9.0" prefWidth="30.0" />
-                        <Separator layoutX="64.0" layoutY="43.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="5.0" />
-                        <Separator layoutX="226.0" layoutY="43.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="5.0" />
+                        <Button fx:id="button_transpose" layoutX="109.0" layoutY="11.0" mnemonicParsing="false" text="Transpose" />
                      </children>
                   </AnchorPane>
-              </content>
-               <VBox.margin>
-                  <Insets bottom="5.0" />
-               </VBox.margin>
-            </TitledPane>
-            <TitledPane animated="false" collapsible="false" prefHeight="141.0" prefWidth="288.0" text="Measured Frame">
-              <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                      <opaqueInsets>
-                          <Insets />
-                      </opaqueInsets>
-                      <children>
-                          <TextField fx:id="measured_frame_top_left" layoutX="14.0" layoutY="14.0" prefWidth="105.0" text="(0.00, 0.00)" />
-                          <TextField fx:id="measured_frame_top_right" layoutX="174.0" layoutY="15.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
-                          <TextField fx:id="measured_frame_bottom_right" layoutX="174.0" layoutY="68.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
-                          <TextField fx:id="measured_frame_bottom_left" layoutX="14.0" layoutY="68.0" prefWidth="105.0" text="(0.00, 0.00)" />
-                          <Separator layoutX="128.0" layoutY="22.0" prefHeight="10.0" prefWidth="30.0" />
-                          <Separator layoutX="128.0" layoutY="76.0" prefHeight="9.0" prefWidth="30.0" />
-                          <Separator layoutX="64.0" layoutY="43.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="5.0" />
-                          <Separator layoutX="226.0" layoutY="43.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="5.0" />
-                      </children>
-                  </AnchorPane>
-              </content>
-            </TitledPane>
-            <AnchorPane prefHeight="46.0" prefWidth="288.0">
-               <children>
-                  <Button fx:id="button_transpose" layoutX="109.0" layoutY="11.0" mnemonicParsing="false" text="Transpose" />
+                  <TitledPane animated="false" collapsible="false" prefWidth="288.0" text="Calculated data" VBox.vgrow="ALWAYS">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="80.0" prefWidth="286.0">
+                           <children>
+                              <Label layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="130.0" text="Center:" />
+                              <Label fx:id="label_center" layoutX="164.0" layoutY="14.0" prefHeight="17.0" prefWidth="82.0" text="--">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="14.0" layoutY="42.0" prefHeight="16.0" prefWidth="150.0" text="Rotation Std. Deviation:" wrapText="true" />
+                              <Label fx:id="label_rotation_std_deviation" layoutX="164.0" layoutY="42.0" prefHeight="17.0" prefWidth="82.0" text="--">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </AnchorPane>
+                    </content>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </TitledPane>
                </children>
-            </AnchorPane>
-            <TitledPane animated="false" collapsible="false" prefWidth="288.0" text="Calculated data" VBox.vgrow="ALWAYS">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="80.0" prefWidth="286.0">
-                     <children>
-                        <Label layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="130.0" text="Center:" />
-                        <Label fx:id="label_center" layoutX="164.0" layoutY="14.0" prefHeight="17.0" prefWidth="82.0" text="--">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="14.0" layoutY="42.0" prefHeight="16.0" prefWidth="150.0" text="Rotation Std. Deviation:" wrapText="true" />
-                        <Label fx:id="label_rotation_std_deviation" layoutX="164.0" layoutY="42.0" prefHeight="17.0" prefWidth="82.0" text="--">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Label>
-                     </children></AnchorPane>
-              </content>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </TitledPane>
-         </children>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
-      </VBox>
-   </right>
-   <center>
-      <BorderPane fx:id="pane_canvas" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding></BorderPane>
-   </center>
-</BorderPane>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </VBox>
+         </right>
+         <center>
+            <BorderPane fx:id="pane_canvas" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </BorderPane>
+         </center>
+      </BorderPane>
+      <BorderPane fx:id="loading_overlay" prefHeight="200.0" prefWidth="200.0" styleClass="loading-overlay" visible="false">
+         <center>
+            <VBox alignment="CENTER" BorderPane.alignment="CENTER">
+               <children>
+                  <ProgressIndicator />
+                  <Label fx:id="loading_label" text="...">
+                     <VBox.margin>
+                        <Insets top="15.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font></Label>
+               </children>
+            </VBox>
+         </center></BorderPane>
+   </children>
+</StackPane>

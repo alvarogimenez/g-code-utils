@@ -1,9 +1,14 @@
 package com.gomezgimenez.gcode.utils.model
 
+import java.io.File
+
 import com.gomezgimenez.gcode.utils.entities.{Configuration, Frame, Point, Segment}
 import com.gomezgimenez.gcode.utils.services.GCodeService
+import javafx.application.Platform
 import javafx.beans.property.{SimpleDoubleProperty, SimpleObjectProperty, SimpleStringProperty}
 import javafx.beans.{InvalidationListener, Observable}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 case class DataModel(gCodeService: GCodeService) {
   val originalTopLeftPoint = new SimpleObjectProperty[Option[Point]](Some(Point(0,0)))
@@ -21,6 +26,7 @@ case class DataModel(gCodeService: GCodeService) {
 
   val originalFrame = new SimpleObjectProperty[Option[Frame]](None)
   val measuredFrame = new SimpleObjectProperty[Option[Frame]](None)
+  val lastDirectory = new SimpleObjectProperty[File](new File("."))
   val originalFile = new SimpleStringProperty()
   val originalGCodeData = new SimpleObjectProperty[List[String]](List.empty)
   val originalGCodeSegments = new SimpleObjectProperty[List[Segment]](List.empty)
@@ -60,17 +66,23 @@ case class DataModel(gCodeService: GCodeService) {
     calculatedRotationStdDeviation.set(avgRotation.map(_._2).map(Math.toDegrees).getOrElse(0.0))
   }
 
-  def transpose(): Unit = {
-    val (_transposedGCodeData, _transposedGCodeSegments) =
-      (for {
-      avgCenter <- avgCenter
-      avgRotation <- avgRotation
-    } yield {
-      val gCode = gCodeService.transformGCode(originalGCodeData.get, avgCenter.x, avgCenter.y, avgRotation._1)
-        (gCode, gCodeService.gCodeToSegments(gCode))
-    }).getOrElse((List.empty[String], List.empty[Segment]))
-    transposedGCodeData.set(_transposedGCodeData)
-    transposedGCodeSegments.set(_transposedGCodeSegments)
+  def transpose()(implicit ec: ExecutionContext): Future[Unit] = {
+    Future {
+      val (_transposedGCodeData, _transposedGCodeSegments) =
+        (for {
+          avgCenter <- avgCenter
+          avgRotation <- avgRotation
+        } yield {
+          val gCode = gCodeService.transformGCode(originalGCodeData.get, avgCenter.x, avgCenter.y, avgRotation._1)
+          (gCode, gCodeService.gCodeToSegments(gCode))
+        }).getOrElse((List.empty[String], List.empty[Segment]))
+
+      Platform.runLater(() => {
+        transposedGCodeData.set(_transposedGCodeData)
+        transposedGCodeSegments.set(_transposedGCodeSegments)
+      })
+    }
+
   }
 
   private def avgCenter: Option[Point] = {
