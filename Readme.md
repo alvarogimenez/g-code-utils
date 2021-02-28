@@ -20,7 +20,7 @@ Mechanical alignment systems may induce errors above 300-400um, enough to ruin t
     
     ![Step 2](doc/ReadmeSteps02.png)
     
-    **NOTE:** Try to drill small holes (<0.4mm). The smaller the hole the accurate the calibration in the following steps. 
+    **NOTE:** Try to drill small holes (<0.4mm). The smaller the hole the more accurate the calibration in the following steps. 
     
 * **Step 3: Register the holes in the tool**
 
@@ -36,7 +36,7 @@ Mechanical alignment systems may induce errors above 300-400um, enough to ruin t
 
 * **Step5: Check new hole positions**
 
-    After turning the board the holes will be slightly out of the reference coordinates. This is due to rotation/displacement of the board during the manipulation and imperfections in the board edges. 
+    After turning the board, the holes will be slightly out of the reference coordinates. This is due to rotation/displacement of the board during the manipulation and imperfections in the board edges. 
     
     ![Step 5b](doc/ReadmeSteps05a.png)
 
@@ -44,7 +44,9 @@ Mechanical alignment systems may induce errors above 300-400um, enough to ruin t
     
     ![Step 5b](doc/ReadmeSteps05b.png)
     
-    **NOTE:** A visual alignment is enough to achieve an almost perfect result. However, the alignment must be performed with care, moving the tool with small increments until the desired alignment is reached. 
+    **NOTE:** A visual alignment is enough to achieve an almost perfect result. However, the alignment must be performed with care, moving the tool with small increments until the desired alignment is reached.
+    
+    The software will calculate the Rotation Standard Deviation. This number indicates the deviation of the measured frame from the original shape. Values lower than 0.050 degrees are acceptable. Values higher than 0.050 degrees indicate an incorrect measured frame.  
      
 * **Step6: Load de GCODE into the software**
     
@@ -59,3 +61,17 @@ Mechanical alignment systems may induce errors above 300-400um, enough to ruin t
     Export the new G-CODE program by clicking _File -> Save As..._ and isolate the bottom copper tracks. 
     
     Repeat steps 6 and 7 with all the G-CODE programs that should be transposed in this layer such as soldermask, silkscreen, drill holes, etc. 
+    
+## How to run the software
+
+* **Windows**
+
+    Download the latest binaries (x86 or x64) from the [Releases Section](https://github.com/alvarogimenez/g-code-utils/releases)
+    
+* **Linux/Mac**
+
+    - Install JRE (Version 8 or higher) from [Java Download Page](http://java.com/download)
+    - Download the _JAR_ file from the [Releases Section](https://github.com/alvarogimenez/g-code-utils/releases)
+    - Run the software by executing the following command on a terminal:
+    
+        `java -jar g-code-utils-*.jar`
