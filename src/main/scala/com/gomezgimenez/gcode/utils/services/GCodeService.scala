@@ -3,7 +3,7 @@ package com.gomezgimenez.gcode.utils.services
 import java.io.File
 import java.util.Locale
 
-import com.gomezgimenez.gcode.utils.entities.{Point, Segment}
+import com.gomezgimenez.gcode.utils.entities.{ Point, Segment }
 
 import scala.io.Source
 
@@ -21,10 +21,7 @@ case class GCodeService() {
     gCode
   }
 
-  def transformGCode(gCode: List[String],
-                     dx: Double,
-                     dy: Double,
-                     r: Double): List[String] = {
+  def transformGCode(gCode: List[String], dx: Double, dy: Double, r: Double): List[String] =
     gCode
       .map {
         case G00_XY(x, y, rl) =>
@@ -32,20 +29,19 @@ case class GCodeService() {
             .rotate(r, Point(dx, dy))
             .translate(dx, dy)
           val tLine =
-            s"G00 X${String.format(Locale.US, "%.3f", p.x)} " +
-              s"Y${String.format(Locale.US, "%.3f", p.y)}" + rl
+          s"G00 X${String.format(Locale.US, "%.3f", p.x)} " +
+          s"Y${String.format(Locale.US, "%.3f", p.y)}" + rl
           tLine
         case G01_XY(x, y, rl) =>
           val p = Point(x.toDouble, y.toDouble)
             .rotate(r, Point(dx, dy))
             .translate(dx, dy)
           val tLine =
-            s"G01 X${String.format(Locale.US, "%.3f", p.x)} " +
-              s"Y${String.format(Locale.US, "%.3f", p.y)}" + rl
+          s"G01 X${String.format(Locale.US, "%.3f", p.x)} " +
+          s"Y${String.format(Locale.US, "%.3f", p.y)}" + rl
           tLine
         case line => line
       }
-  }
 
   def gCodeToSegments(gCode: List[String]): List[Segment] = {
     val gCodePoints =
