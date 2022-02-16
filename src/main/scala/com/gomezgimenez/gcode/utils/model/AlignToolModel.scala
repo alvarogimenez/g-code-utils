@@ -2,24 +2,16 @@ package com.gomezgimenez.gcode.utils.model
 
 import java.io.File
 
-import com.gomezgimenez.gcode.utils.entities.{
-  Configuration,
-  Frame,
-  Point,
-  Segment
-}
+import com.gomezgimenez.gcode.utils.entities.{ Frame, Point, Segment }
 import com.gomezgimenez.gcode.utils.services.GCodeService
 import javafx.application.Platform
-import javafx.beans.property.{
-  SimpleDoubleProperty,
-  SimpleObjectProperty,
-  SimpleStringProperty
-}
-import javafx.beans.{InvalidationListener, Observable}
+import javafx.beans.property.{ SimpleBooleanProperty, SimpleDoubleProperty, SimpleObjectProperty, SimpleStringProperty }
+import javafx.beans.{ InvalidationListener, Observable }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-case class DataModel(gCodeService: GCodeService) {
+case class AlignToolModel(gCodeService: GCodeService) {
+
   val originalTopLeftPoint =
     new SimpleObjectProperty[Option[Point]](Some(Point(0, 0)))
   val originalTopRightPoint =
@@ -38,13 +30,13 @@ case class DataModel(gCodeService: GCodeService) {
   val measuredBottomRightPoint =
     new SimpleObjectProperty[Option[Point]](Some(Point(0, 0)))
 
-  val calculatedCenter = new SimpleObjectProperty[Option[Point]](None)
+  val calculatedCenter               = new SimpleObjectProperty[Option[Point]](None)
   val calculatedRotationStdDeviation = new SimpleDoubleProperty()
 
-  val originalFrame = new SimpleObjectProperty[Option[Frame]](None)
-  val measuredFrame = new SimpleObjectProperty[Option[Frame]](None)
-  val lastDirectory = new SimpleObjectProperty[File](new File("."))
-  val originalFile = new SimpleStringProperty()
+  val originalFrame     = new SimpleObjectProperty[Option[Frame]](None)
+  val measuredFrame     = new SimpleObjectProperty[Option[Frame]](None)
+  val lastDirectory     = new SimpleObjectProperty[File](new File("."))
+  val originalFile      = new SimpleStringProperty()
   val originalGCodeData = new SimpleObjectProperty[List[String]](List.empty)
   val originalGCodeSegments =
     new SimpleObjectProperty[List[Segment]](List.empty)
@@ -66,17 +58,17 @@ case class DataModel(gCodeService: GCodeService) {
 
   def buildFrames(): Unit = {
     originalFrame.set(for {
-      topLeft <- originalTopLeftPoint.get
-      topRight <- originalTopRightPoint.get
-      bottomLeft <- originalBottomLeftPoint.get
+      topLeft     <- originalTopLeftPoint.get
+      topRight    <- originalTopRightPoint.get
+      bottomLeft  <- originalBottomLeftPoint.get
       bottomRight <- originalBottomRightPoint.get
     } yield {
       Frame(topLeft, topRight, bottomLeft, bottomRight)
     })
     measuredFrame.set(for {
-      topLeft <- measuredTopLeftPoint.get
-      topRight <- measuredTopRightPoint.get
-      bottomLeft <- measuredBottomLeftPoint.get
+      topLeft     <- measuredTopLeftPoint.get
+      topRight    <- measuredTopRightPoint.get
+      bottomLeft  <- measuredBottomLeftPoint.get
       bottomRight <- measuredBottomRightPoint.get
     } yield {
       Frame(topLeft, topRight, bottomLeft, bottomRight)
@@ -87,12 +79,12 @@ case class DataModel(gCodeService: GCodeService) {
     )
   }
 
-  def transpose()(implicit ec: ExecutionContext): Future[Unit] = {
+  def transpose()(implicit ec: ExecutionContext): Future[Unit] =
     Future {
       val (_transposedGCodeData, _transposedGCodeSegments) =
         (for {
-          origCenter <- origCenter
-          avgCenter <- avgCenter
+          origCenter  <- origCenter
+          avgCenter   <- avgCenter
           avgRotation <- avgRotation
         } yield {
           val gCode = gCodeService.transformGCode(
@@ -109,9 +101,8 @@ case class DataModel(gCodeService: GCodeService) {
         transposedGCodeSegments.set(_transposedGCodeSegments)
       })
     }
-  }
 
-  private def origCenter: Option[Point] = {
+  private def origCenter: Option[Point] =
     for {
       originalFrame <- originalFrame.get
     } yield {
@@ -123,13 +114,12 @@ case class DataModel(gCodeService: GCodeService) {
       val y3 = originalFrame.topRight.y
       val x4 = originalFrame.bottomLeft.x
       val y4 = originalFrame.bottomLeft.y
-      val x = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
-      val y = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
+      val x  = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
+      val y  = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
       Point(x, y)
     }
-  }
 
-  private def avgCenter: Option[Point] = {
+  private def avgCenter: Option[Point] =
     for {
       measuredFrame <- measuredFrame.get
     } yield {
@@ -141,18 +131,17 @@ case class DataModel(gCodeService: GCodeService) {
       val y3 = measuredFrame.topRight.y
       val x4 = measuredFrame.bottomLeft.x
       val y4 = measuredFrame.bottomLeft.y
-      val x = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
-      val y = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
+      val x  = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
+      val y  = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
       Point(x, y)
     }
-  }
 
-  private def avgRotation: Option[(Double, Double)] = {
+  private def avgRotation: Option[(Double, Double)] =
     for {
       measuredFrame <- measuredFrame.get
       originalFrame <- originalFrame.get
-      origCenter <- origCenter
-      avgCenter <- avgCenter
+      origCenter    <- origCenter
+      avgCenter     <- avgCenter
     } yield {
       val original_x1 = originalFrame.topLeft.x
       val original_y1 = originalFrame.topLeft.y
@@ -201,5 +190,4 @@ case class DataModel(gCodeService: GCodeService) {
 
       (mean, stdDeviation)
     }
-  }
 }

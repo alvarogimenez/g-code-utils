@@ -1,10 +1,10 @@
 package com.gomezgimenez.gcode.utils.entities
 
 case class Configuration(
-                          alignmentFrames: Option[AlignmentFrames]
-                        )
+    alignmentFrames: Option[AlignmentFrames]
+)
 
 case class AlignmentFrames(
-                            originalFrame: Frame,
-                            measuredFrame: Frame
-                          )
+    originalFrame: Frame,
+    measuredFrame: Frame
+)

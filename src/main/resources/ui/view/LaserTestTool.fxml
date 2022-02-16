@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane minHeight="480.0" minWidth="640.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gomezgimenez.gcode.utils.controller.LaserTestTabController">
+        <right>
+            <VBox alignment="TOP_CENTER" prefWidth="300.0" spacing="5.0" BorderPane.alignment="CENTER">
+                <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                </padding>
+                <children>
+                    <TitledPane animated="false" collapsible="false" text="Configuration">
+                        <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="230.0" prefWidth="288.0">
+                                <children>
+                                    <Label layoutX="14.0" layoutY="22.0" text="Max. Laser Power ($30)" />
+                                    <TextField fx:id="text_field_max_laser_power" layoutX="144.0" layoutY="18.0" prefHeight="25.0" prefWidth="130.0" />
+                                    <Label layoutX="14.0" layoutY="94.0" text="Nº of Probes" />
+                                    <Spinner fx:id="spinner_number_of_probes" editable="true" layoutX="144.0" layoutY="90.0" prefHeight="25.0" prefWidth="130.0" />
+                                    <Label layoutX="14.0" layoutY="130.0" text="Min. Probe Power (%)" />
+                                    <Label layoutX="14.0" layoutY="164.0" text="Max. Probe Power (%)" />
+                                    <TextField fx:id="text_field_min_probe_power" layoutX="144.0" layoutY="126.0" prefWidth="130.0" />
+                                    <TextField fx:id="text_field_max_probe_power" layoutX="144.0" layoutY="160.0" prefWidth="130.0" />
+                                    <ChoiceBox fx:id="choice_box_orientation" layoutX="144.0" layoutY="195.0" prefWidth="130.0" />
+                                    <Label layoutX="14.0" layoutY="199.0" text="Orientation" />
+                        <Label layoutX="14.0" layoutY="59.0" text="Feed Rate XY (mm/min)" />
+                        <TextField fx:id="text_field_feed_rate"  layoutX="144.0" layoutY="55.0" prefWidth="130.0" />
+                                </children></AnchorPane>
+                        </content>
+                    </TitledPane>
+                    <TitledPane animated="false" expanded="false" text="Advanced Configuration">
+                        <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                <children>
+                                    <Label layoutX="14.0" layoutY="14.0" text="Box Width (mm)" />
+                                    <Label layoutX="14.0" layoutY="48.0" text="Box Height (mm)" />
+                                    <Label layoutX="13.0" layoutY="82.0" text="Spacing (mm)" />
+                                    <Label layoutX="13.0" layoutY="118.0" text="Text Height (mm)" />
+                                    <Label layoutX="15.0" layoutY="151.0" text="Text Width (mm)" />
+                                    <TextField fx:id="text_field_box_width" layoutX="144.0" layoutY="10.0" prefHeight="25.0" prefWidth="130.0" />
+                                    <TextField fx:id="text_field_box_height" layoutX="144.0" layoutY="44.0" prefWidth="130.0" />
+                                    <TextField fx:id="text_field_spacing" layoutX="144.0" layoutY="78.0" prefWidth="130.0" />
+                                    <TextField fx:id="text_field_text_height" layoutX="144.0" layoutY="114.0" prefWidth="130.0" />
+                                    <TextField fx:id="text_field_text_width" layoutX="144.0" layoutY="147.0" prefWidth="130.0" />
+                                </children></AnchorPane>
+                        </content>
+                    </TitledPane>
+                    <Button fx:id="button_save_as" mnemonicParsing="false" text="Save As...">
+                        <graphic>
+                            <ImageView>
+                                <Image requestedHeight="24" requestedWidth="24" url="@../../icon/save.png" />
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                </children>
+            </VBox>
+        </right>
+    <center>
+        <BorderPane fx:id="laser_test_tool_canvas" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </BorderPane>
+    </center>
+</BorderPane>

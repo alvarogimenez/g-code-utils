@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>..\..\target\scala-2.13\g-code-utils-assembly-1.0.2-SNAPSHOT.jar</jar>
+  <jar>..\..\target\scala-2.13\g-code-utils-assembly-1.1.0-SNAPSHOT.jar</jar>
   <outfile>..\..\target\dist-x64\g-code-utils.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>

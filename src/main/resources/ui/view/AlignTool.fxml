@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<BorderPane minHeight="480.0" minWidth="640.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gomezgimenez.gcode.utils.controller.AlignToolTabController">
+    <right>
+        <VBox alignment="TOP_CENTER" prefWidth="300.0" spacing="5.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="button_open" mnemonicParsing="false" text="Open G-Code" >
+                    <graphic>
+                        <ImageView>
+                            <Image url="@../../icon/open.png" requestedWidth="24" requestedHeight="24"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <TitledPane animated="false" collapsible="false" prefHeight="141.0" prefWidth="287.0" text="Original Frame">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <opaqueInsets>
+                                <Insets />
+                            </opaqueInsets>
+                            <children>
+                                <TextField fx:id="original_frame_top_left" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                                <TextField fx:id="original_frame_top_right" layoutX="174.0" layoutY="15.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                                <TextField fx:id="original_frame_bottom_right" layoutX="174.0" layoutY="68.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                                <TextField fx:id="original_frame_bottom_left" layoutX="14.0" layoutY="68.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                                <Separator layoutX="128.0" layoutY="22.0" prefHeight="10.0" prefWidth="30.0" />
+                                <Separator layoutX="128.0" layoutY="76.0" prefHeight="9.0" prefWidth="30.0" />
+                                <Separator layoutX="64.0" layoutY="43.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="5.0" />
+                                <Separator layoutX="226.0" layoutY="43.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="5.0" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </TitledPane>
+                <TitledPane animated="false" collapsible="false" prefHeight="141.0" prefWidth="200.0" text="Measured Frame">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <opaqueInsets>
+                                <Insets />
+                            </opaqueInsets>
+                            <children>
+                                <TextField fx:id="measured_frame_top_left" layoutX="14.0" layoutY="14.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                                <TextField fx:id="measured_frame_top_right" layoutX="174.0" layoutY="15.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                                <TextField fx:id="measured_frame_bottom_right" layoutX="174.0" layoutY="68.0" prefHeight="25.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                                <TextField fx:id="measured_frame_bottom_left" layoutX="14.0" layoutY="68.0" prefWidth="105.0" text="(0.00, 0.00)" />
+                                <Separator layoutX="128.0" layoutY="22.0" prefHeight="10.0" prefWidth="30.0" />
+                                <Separator layoutX="128.0" layoutY="76.0" prefHeight="9.0" prefWidth="30.0" />
+                                <Separator layoutX="64.0" layoutY="43.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="5.0" />
+                                <Separator layoutX="226.0" layoutY="43.0" orientation="VERTICAL" prefHeight="20.0" prefWidth="5.0" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </TitledPane>
+                <Button fx:id="button_transpose" mnemonicParsing="false" text="Transpose" >
+                    <graphic>
+                        <ImageView>
+                            <Image url="@../../icon/transpose.png" requestedWidth="24" requestedHeight="24"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <TitledPane animated="false" collapsible="false" prefWidth="288.0" text="Calculated data" VBox.vgrow="ALWAYS">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="80.0" prefWidth="286.0">
+                            <children>
+                                <Label layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="130.0" text="Center:" />
+                                <Label fx:id="label_center" layoutX="164.0" layoutY="14.0" prefHeight="17.0" prefWidth="82.0" text="--">
+                                    <font>
+                                        <Font name="System Bold" size="12.0" />
+                                    </font>
+                                </Label>
+                                <Label layoutX="14.0" layoutY="42.0" prefHeight="16.0" prefWidth="150.0" text="Rotation Std. Deviation:" wrapText="true" />
+                                <Label fx:id="label_rotation_std_deviation" layoutX="164.0" layoutY="42.0" prefHeight="17.0" prefWidth="82.0" text="--">
+                                    <font>
+                                        <Font name="System Bold" size="12.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                    <VBox.margin>
+                        <Insets />
+                    </VBox.margin>
+                </TitledPane>
+                <Button fx:id="button_save_as" mnemonicParsing="false" text="Save As..." >
+                    <graphic>
+                        <ImageView>
+                            <Image url="@../../icon/save.png" requestedWidth="24" requestedHeight="24"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </VBox>
+    </right>
+    <center>
+        <BorderPane fx:id="alignment_tool_canvas" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </BorderPane>
+    </center>
+</BorderPane>
