@@ -46,17 +46,19 @@ case class GCodeService() {
 
   def gCodeToSegments(gCode: List[String]): List[Segment] = {
     val gCodePoints =
-      gCode
-        .collect {
-          case G00_XY(x, y, _) => Point(x.toDouble, y.toDouble)
-          case G01_XY(x, y, _) => Point(x.toDouble, y.toDouble)
-        }
-    gCodePoints match {
-      case p1 :: p2 :: tail =>
-        tail.foldLeft(List(Segment(p1, p2)))(
+      gCode.collect {
+        case G00_XY(x, y, _) => Point(x.toDouble, y.toDouble)
+        case G01_XY(x, y, _) => Point(x.toDouble, y.toDouble)
+      }.toVector
+    if (gCodePoints.size >= 2) {
+      gCodePoints
+        .drop(2)
+        .foldLeft(Vector(Segment(gCodePoints(0), gCodePoints(1))))(
           (acc, n) => acc :+ Segment(acc.last.p2, n)
         )
-      case _ => List.empty
+        .toList
+    } else {
+      List.empty
     }
   }
 
