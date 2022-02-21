@@ -8,6 +8,8 @@ import javafx.scene.transform.Affine
 
 case class LaserTestPlot(model: LaserTestToolModel) extends GCodePlotBase {
   model.segments.addListener(_ => draw())
+  model.showBox.addListener(_ => draw())
+  model.showText.addListener(_ => draw())
 
   override def draw(): Unit = {
     val g2d = canvas.getGraphicsContext2D
@@ -16,9 +18,11 @@ case class LaserTestPlot(model: LaserTestToolModel) extends GCodePlotBase {
     g2d.fillRect(0, 0, getWidth, getHeight)
     g2d.setLineCap(StrokeLineCap.ROUND)
 
-    val segments = model.segments.get.flatMap(_.segments)
+    val boxSegments  = model.segments.get.flatMap(_.boxSegments)
+    val textSegments = model.segments.get.flatMap(_.textSegments)
+    val allSegments  = boxSegments ++ textSegments
 
-    val boundingBox = segments
+    val boundingBox = allSegments
       .map(_.boundingBox)
       .foldLeft(BoundingBox(0, 0, 0, 0))((a, b) => a.greater(b))
       .margin(1)
@@ -32,8 +36,17 @@ case class LaserTestPlot(model: LaserTestToolModel) extends GCodePlotBase {
 
     g2d.setStroke(Color.CYAN.darker())
     g2d.setLineWidth(0.15)
-    segments.foreach { s =>
-      g2d.strokeLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y)
+
+    if (model.showBox.get) {
+      boxSegments.foreach { s =>
+        g2d.strokeLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y)
+      }
+    }
+
+    if (model.showText.get) {
+      textSegments.foreach { s =>
+        g2d.strokeLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y)
+      }
     }
   }
 }

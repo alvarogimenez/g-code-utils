@@ -12,7 +12,8 @@ import javafx.application.Platform
 import javafx.event.ActionEvent
 import javafx.fxml.{ FXML, FXMLLoader }
 import javafx.scene.Scene
-import javafx.scene.control.{ Button, Label, MenuItem, TextField }
+import javafx.scene.control.Alert.AlertType
+import javafx.scene.control.{ Alert, Button, Label, MenuItem, TextField }
 import javafx.scene.layout.{ BorderPane, StackPane }
 import javafx.scene.paint.Color
 import javafx.stage.FileChooser.ExtensionFilter
@@ -75,15 +76,32 @@ case class AlignToolTabController(
         Future {
           val gCode         = gCodeService.readGCode(selectedFile)
           val gCodeSegments = gCodeService.gCodeToSegments(gCode)
-          Platform.runLater(() => {
-            model.lastDirectory.set(new File(selectedFile.getParent))
-            model.originalFile.set(selectedFile.getAbsolutePath)
-            model.originalGCodeData.set(gCode)
-            model.originalGCodeSegments.set(gCodeSegments)
-            model.transposedGCodeSegments.set(List.empty)
-            primaryStage.setTitle(Util.windowTitle(Some(selectedFile.getName)))
-            globalModel.loading.set(false)
-          })
+          if (gCodeSegments.nonEmpty) {
+            Platform.runLater(() => {
+              model.lastDirectory.set(new File(selectedFile.getParent))
+              model.originalFile.set(selectedFile.getAbsolutePath)
+              model.originalGCodeData.set(gCode)
+              model.originalGCodeSegments.set(gCodeSegments)
+              model.transposedGCodeSegments.set(List.empty)
+              primaryStage.setTitle(Util.windowTitle(Some(selectedFile.getName)))
+              globalModel.loading.set(false)
+            })
+          } else {
+            Platform.runLater(() => {
+              val alert = new Alert(AlertType.ERROR)
+              alert.setTitle("Error loading file")
+              alert.setHeaderText(s"No segments found while loading file '${selectedFile.getName}'.")
+              alert.setContentText(
+                "Please check if the GCode file was generated correctly and is not empty. " +
+                "If you think this is a bug, please submit an issue to: " +
+                "https://github.com/alvarogimenez/g-code-utils/issues")
+
+              alert.showAndWait()
+
+              model.lastDirectory.set(new File(selectedFile.getParent))
+              globalModel.loading.set(false)
+            })
+          }
         }
       }
     })

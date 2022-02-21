@@ -7,5 +7,9 @@ package object model {
   case object Horizontal extends Orientation
   case object Vertical   extends Orientation
 
-  case class SegmentsWithPower(power: Double, segments: List[Segment])
+  case class SegmentsWithPower(
+      power: Double,
+      boxSegments: List[Segment],
+      textSegments: List[Segment]
+  )
 }

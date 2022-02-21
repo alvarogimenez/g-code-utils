@@ -2,14 +2,12 @@ package com.gomezgimenez.gcode.utils.controller
 
 import java.io.{ BufferedWriter, File, FileWriter }
 import java.lang
-import java.text.DecimalFormat
 import java.util.Locale
 
 import com.gomezgimenez.gcode.utils.components.LaserTestPlot
 import com.gomezgimenez.gcode.utils.entities.{ Point, Segment }
 import com.gomezgimenez.gcode.utils.model._
 import com.gomezgimenez.gcode.utils.services.GCodeService
-import javafx.beans.{ InvalidationListener, Observable }
 import javafx.beans.binding.Bindings
 import javafx.beans.value.{ ChangeListener, ObservableValue }
 import javafx.event.ActionEvent
@@ -38,10 +36,15 @@ case class LaserTestTabController(
   @FXML var text_field_text_width: TextField               = _
   @FXML var spinner_number_of_probes: Spinner[Integer]     = _
   @FXML var choice_box_orientation: ChoiceBox[Orientation] = _
+  @FXML var checkbox_show_text: CheckBox                   = _
+  @FXML var checkbox_show_box: CheckBox                    = _
   @FXML var button_save_as: Button                         = _
+  @FXML var titled_pane_advanced_configuration: TitledPane = _
 
   def initialize(): Unit = {
     laser_test_tool_canvas.setCenter(LaserTestPlot(model))
+
+    titled_pane_advanced_configuration.setExpanded(false)
 
     choice_box_orientation.getItems.add(Horizontal)
     choice_box_orientation.getItems.add(Vertical)
@@ -69,6 +72,16 @@ case class LaserTestTabController(
     Bindings.bindBidirectional(text_field_spacing.textProperty(), model.spacing, c)
     Bindings.bindBidirectional(text_field_text_height.textProperty(), model.fontHeight, c)
     Bindings.bindBidirectional(text_field_text_width.textProperty(), model.fontWidth, c)
+
+    checkbox_show_text.selectedProperty().bindBidirectional(model.showText)
+    checkbox_show_box.selectedProperty().bindBidirectional(model.showBox)
+
+    text_field_text_height.disableProperty().bind(model.showText.not())
+    text_field_text_width.disableProperty().bind(model.showText.not())
+
+    text_field_box_width.disableProperty().bind(model.showBox.not())
+    text_field_box_height.disableProperty().bind(model.showBox.not())
+    text_field_spacing.disableProperty().bind(model.showBox.not())
 
     button_save_as.setOnAction((_: ActionEvent) => save())
 
@@ -99,8 +112,13 @@ case class LaserTestTabController(
     )
     val selectedFile = fileChooser.showSaveDialog(primaryStage)
     if (selectedFile != null) {
-      val gCode = gCodeService.segmentsToLaserGCode(model.segments.get, model.feedRate.get)
-      val bw    = new BufferedWriter(new FileWriter(selectedFile))
+      val gCode = gCodeService.segmentsToLaserGCode(
+        segmentsByPower = model.segments.get,
+        showBoxes = model.showBox.get,
+        showText = model.showText.get,
+        feedRateXY = model.feedRate.get
+      )
+      val bw = new BufferedWriter(new FileWriter(selectedFile))
       gCode.foreach { line =>
         bw.write(line + "\n")
       }
@@ -138,12 +156,13 @@ case class LaserTestTabController(
 
       SegmentsWithPower(
         power = (power / 100.0) * model.maxLaserPower.get,
-        segments = List(
+        boxSegments = List(
           Segment(a, b),
           Segment(b, c),
           Segment(c, d),
           Segment(d, a)
-        ) ++ textToSegments(s"${power.toInt}%", Point(p.x, p.y), fontWidth, fontHeight)
+        ),
+        textSegments = textToSegments(s"${power.toInt}%", Point(p.x, p.y), fontWidth, fontHeight)
       )
     }
 

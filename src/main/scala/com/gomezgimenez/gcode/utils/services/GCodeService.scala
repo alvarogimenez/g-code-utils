@@ -62,7 +62,12 @@ case class GCodeService() {
     }
   }
 
-  def segmentsToLaserGCode(segmentsByPower: List[SegmentsWithPower], feedRateXY: Double): List[String] =
+  def segmentsToLaserGCode(
+      segmentsByPower: List[SegmentsWithPower],
+      showBoxes: Boolean,
+      showText: Boolean,
+      feedRateXY: Double
+  ): List[String] =
     List(
       "G21", // Metric system,
       "G90", // Absolute positioning
@@ -70,7 +75,10 @@ case class GCodeService() {
       "G94", // Feed per minute
       "G00 Z0" // Set height to 0
     ) ++ segmentsByPower.flatMap { s =>
-      s.segments
+      val segments =
+      (if (showBoxes) s.boxSegments else List.empty) ++
+      (if (showText) s.textSegments else List.empty)
+      segments
         .foldLeft[(Option[Segment], List[String])]((None, List.empty)) {
           case ((last, acc), n) =>
             val gCode = if (last.exists(_.p2 == n.p1)) {

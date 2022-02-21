@@ -1,6 +1,6 @@
 package com.gomezgimenez.gcode.utils.model
 
-import javafx.beans.property.{ IntegerProperty, SimpleDoubleProperty, SimpleIntegerProperty, SimpleObjectProperty }
+import javafx.beans.property.{ IntegerProperty, SimpleBooleanProperty, SimpleDoubleProperty, SimpleIntegerProperty, SimpleObjectProperty }
 
 case class LaserTestToolModel() {
   val maxLaserPower: SimpleIntegerProperty                = new SimpleIntegerProperty(1000)
@@ -11,9 +11,11 @@ case class LaserTestToolModel() {
   val maxProbePower: SimpleIntegerProperty                = new SimpleIntegerProperty(100)
   val orientation: SimpleObjectProperty[Orientation]      = new SimpleObjectProperty[Orientation](Vertical)
 
+  val showBox: SimpleBooleanProperty   = new SimpleBooleanProperty(true)
   val boxWidth: SimpleDoubleProperty   = new SimpleDoubleProperty(5.0)
   val boxHeight: SimpleDoubleProperty  = new SimpleDoubleProperty(2.3)
   val spacing: SimpleDoubleProperty    = new SimpleDoubleProperty(0.5)
+  val showText: SimpleBooleanProperty  = new SimpleBooleanProperty(true)
   val fontWidth: SimpleDoubleProperty  = new SimpleDoubleProperty(1.27)
   val fontHeight: SimpleDoubleProperty = new SimpleDoubleProperty(1.524)
 
