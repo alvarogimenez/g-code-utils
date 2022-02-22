@@ -3,62 +3,64 @@ package com.gomezgimenez.gcode.utils.services
 import java.io.File
 import java.util.Locale
 
-import com.gomezgimenez.gcode.utils.entities.{ Point, Segment }
+import com.gomezgimenez.gcode.utils.entities.{ G, G_Motion, G_Planar_Motion, G_Unknown, Point, Segment }
 import com.gomezgimenez.gcode.utils.model.SegmentsWithPower
 
 import scala.io.Source
 
 case class GCodeService() {
-  val G00_XY = """G00 X([0-9.\-]+)\s*Y([0-9.\-]+)(.*)""".r
-  val G01_XY = """G01 X([0-9.\-]+)\s*Y([0-9.\-]+)(.*)""".r
+  val G = """(G([0-9]+)) (X([0-9.\-]+))*\s*(Y([0-9.\-]+))*(.*)""".r
 
-  def readGCode(file: File): List[String] = {
+  def readGCodeFile(file: File): Vector[G] = {
     val source = Source.fromFile(file)
     val gCode =
       source
         .getLines()
-        .toList
+        .toVector
     source.close()
-    gCode
+    parseGCodeLines(gCode)
   }
 
-  def transformGCode(gCode: List[String], dx: Double, dy: Double, r: Double): List[String] =
-    gCode
-      .map {
-        case G00_XY(x, y, rl) =>
-          val p = Point(x.toDouble, y.toDouble)
-            .rotate(r, Point(dx, dy))
-            .translate(dx, dy)
-          val tLine =
-          s"G00 X${String.format(Locale.US, "%.3f", p.x)} " +
-          s"Y${String.format(Locale.US, "%.3f", p.y)}" + rl
-          tLine
-        case G01_XY(x, y, rl) =>
-          val p = Point(x.toDouble, y.toDouble)
-            .rotate(r, Point(dx, dy))
-            .translate(dx, dy)
-          val tLine =
-          s"G01 X${String.format(Locale.US, "%.3f", p.x)} " +
-          s"Y${String.format(Locale.US, "%.3f", p.y)}" + rl
-          tLine
-        case line => line
-      }
+  def parseGCodeLines(lines: Vector[String]): Vector[G] =
+    fillPlanarCoordinates(lines.map { cmd =>
+      G_Motion.parse(cmd).fold[G](G_Unknown(cmd))(identity)
+    })
 
-  def gCodeToSegments(gCode: List[String]): List[Segment] = {
+  def fillPlanarCoordinates(gCode: Vector[G]): Vector[G] =
+    gCode
+      .foldLeft((Vector.empty[G], 0.0, 0.0)) {
+        case ((acc, lastX, lastY), n: G_Motion) if n.x.isDefined || n.y.isDefined =>
+          val x = n.x.getOrElse(lastX)
+          val y = n.y.getOrElse(lastY)
+          (acc :+ G_Planar_Motion(n.index, x, y, n.z, n.f, n.tail), x, y)
+        case ((acc, lastX, lastY), n) =>
+          (acc :+ n, lastX, lastY)
+      }
+      ._1
+
+  def transformGCode(gCode: Vector[G], dx: Double, dy: Double, r: Double): Vector[G] =
+    gCode.map {
+      case g: G_Planar_Motion =>
+        val p = Point(g.x, g.y)
+          .rotate(r, Point(dx, dy))
+          .translate(dx, dy)
+        g.copy(x = p.x, y = p.y)
+      case other => other
+    }
+
+  def gCodeToSegments(gCode: Vector[G]): Vector[Segment] = {
     val gCodePoints =
       gCode.collect {
-        case G00_XY(x, y, _) => Point(x.toDouble, y.toDouble)
-        case G01_XY(x, y, _) => Point(x.toDouble, y.toDouble)
-      }.toVector
+        case g: G_Planar_Motion => Point(g.x, g.y)
+      }
     if (gCodePoints.size >= 2) {
       gCodePoints
         .drop(2)
         .foldLeft(Vector(Segment(gCodePoints(0), gCodePoints(1))))(
           (acc, n) => acc :+ Segment(acc.last.p2, n)
         )
-        .toList
     } else {
-      List.empty
+      Vector.empty
     }
   }
 

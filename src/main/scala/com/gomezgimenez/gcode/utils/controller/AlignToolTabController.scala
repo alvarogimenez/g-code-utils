@@ -74,7 +74,7 @@ case class AlignToolTabController(
         globalModel.loading.set(true)
         globalModel.loadingText.set(s"""Loading file "${selectedFile.getName}"...""")
         Future {
-          val gCode         = gCodeService.readGCode(selectedFile)
+          val gCode         = gCodeService.readGCodeFile(selectedFile)
           val gCodeSegments = gCodeService.gCodeToSegments(gCode)
           if (gCodeSegments.nonEmpty) {
             Platform.runLater(() => {
@@ -82,7 +82,7 @@ case class AlignToolTabController(
               model.originalFile.set(selectedFile.getAbsolutePath)
               model.originalGCodeData.set(gCode)
               model.originalGCodeSegments.set(gCodeSegments)
-              model.transposedGCodeSegments.set(List.empty)
+              model.transposedGCodeSegments.set(Vector.empty)
               primaryStage.setTitle(Util.windowTitle(Some(selectedFile.getName)))
               globalModel.loading.set(false)
             })
@@ -123,7 +123,7 @@ case class AlignToolTabController(
           val gCode = model.transposedGCodeData.get
           val bw    = new BufferedWriter(new FileWriter(selectedFile))
           gCode.foreach { line =>
-            bw.write(line + "\n")
+            bw.write(line.print + "\n")
           }
           bw.close()
         }

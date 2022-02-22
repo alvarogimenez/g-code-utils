@@ -15,4 +15,5 @@ target
 
 #Other
 *.nc
+*.gcode
 *.config
