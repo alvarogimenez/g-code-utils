@@ -35,7 +35,7 @@
                   <Font name="System Bold" size="12.0" />
                </font>
             </Label>
-            <Label layoutX="109.0" layoutY="118.0" text="1.1.0-SNAPSHOT" />
+            <Label layoutX="109.0" layoutY="118.0" text="1.1.0" />
             <Label layoutX="108.0" layoutY="146.0" text="https://github.com/alvarogimenez/g-code-utils" />
          </children>
       </AnchorPane>
