@@ -9,8 +9,6 @@ import com.gomezgimenez.gcode.utils.model.SegmentsWithPower
 import scala.io.Source
 
 case class GCodeService() {
-  val G = """(G([0-9]+))\s*(X([0-9.\-]+))*\s*(Y([0-9.\-]+))*(.*)""".r
-
   def readGCodeFile(file: File): Vector[G] = {
     val source = Source.fromFile(file)
     val gCode =
