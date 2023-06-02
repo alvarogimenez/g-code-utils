@@ -1,16 +1,15 @@
 package com.gomezgimenez.gcode.utils.model
 
 import java.io.File
-
-import com.gomezgimenez.gcode.utils.entities.{ Frame, G, Point, Segment }
+import com.gomezgimenez.gcode.utils.entities.{Frame, GBlock, Geometry, Point, Segment}
 import com.gomezgimenez.gcode.utils.services.GCodeService
 import javafx.application.Platform
-import javafx.beans.property.{ SimpleBooleanProperty, SimpleDoubleProperty, SimpleObjectProperty, SimpleStringProperty }
-import javafx.beans.{ InvalidationListener, Observable }
+import javafx.beans.property.{SimpleBooleanProperty, SimpleDoubleProperty, SimpleObjectProperty, SimpleStringProperty}
+import javafx.beans.{InvalidationListener, Observable}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
-case class AlignToolModel(gCodeService: GCodeService) {
+case class AlignToolModel(gCodeService: GCodeService, globalModel: GlobalModel) {
 
   val originalTopLeftPoint =
     new SimpleObjectProperty[Option[Point]](Some(Point(0, 0)))
@@ -31,18 +30,14 @@ case class AlignToolModel(gCodeService: GCodeService) {
     new SimpleObjectProperty[Option[Point]](Some(Point(0, 0)))
 
   val calculatedCenter               = new SimpleObjectProperty[Option[Point]](None)
+  val calculatedRotation             = new SimpleDoubleProperty()
   val calculatedRotationStdDeviation = new SimpleDoubleProperty()
 
   val originalFrame     = new SimpleObjectProperty[Option[Frame]](None)
   val measuredFrame     = new SimpleObjectProperty[Option[Frame]](None)
-  val lastDirectory     = new SimpleObjectProperty[File](new File("."))
-  val originalFile      = new SimpleStringProperty()
-  val originalGCodeData = new SimpleObjectProperty[Vector[G]](Vector.empty)
-  val originalGCodeSegments =
-    new SimpleObjectProperty[Vector[Segment]](Vector.empty)
-  val transposedGCodeData = new SimpleObjectProperty[Vector[G]](Vector.empty)
-  val transposedGCodeSegments =
-    new SimpleObjectProperty[Vector[Segment]](Vector.empty)
+  val transposedGCodeData = new SimpleObjectProperty[Vector[GBlock]](Vector.empty)
+  val transposedGCodeGeometry =
+    new SimpleObjectProperty[Vector[Geometry]](Vector.empty)
 
   private val buildFramesListener = new InvalidationListener {
     override def invalidated(observable: Observable): Unit = buildFrames()
@@ -74,6 +69,9 @@ case class AlignToolModel(gCodeService: GCodeService) {
       Frame(topLeft, topRight, bottomLeft, bottomRight)
     })
     calculatedCenter.set(avgCenter)
+    calculatedRotation.set(
+      avgRotation.map(_._1).map(Math.toDegrees).getOrElse(0.0)
+    )
     calculatedRotationStdDeviation.set(
       avgRotation.map(_._2).map(Math.toDegrees).getOrElse(0.0)
     )
@@ -88,17 +86,17 @@ case class AlignToolModel(gCodeService: GCodeService) {
           avgRotation <- avgRotation
         } yield {
           val gCode = gCodeService.transformGCode(
-            originalGCodeData.get,
+            globalModel.originalGCodeData.get,
             avgCenter.x - origCenter.x,
             avgCenter.y - origCenter.y,
             avgRotation._1
           )
           (gCode, gCodeService.gCodeToSegments(gCode))
-        }).getOrElse((Vector.empty[G], Vector.empty[Segment]))
+        }).getOrElse((Vector.empty[GBlock], Vector.empty[Segment]))
 
       Platform.runLater(() => {
         transposedGCodeData.set(_transposedGCodeData)
-        transposedGCodeSegments.set(_transposedGCodeSegments)
+        transposedGCodeGeometry.set(_transposedGCodeSegments)
       })
     }
 

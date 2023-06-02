@@ -1,6 +1,6 @@
 package com.gomezgimenez.gcode.utils
 
-import com.gomezgimenez.gcode.utils.entities.{ G, G_Motion }
+import com.gomezgimenez.gcode.utils.entities.{ GCommand, G_Motion }
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

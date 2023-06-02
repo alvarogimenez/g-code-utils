@@ -2,81 +2,99 @@ package com.gomezgimenez.gcode.utils.entities
 
 import java.util.Locale
 
-sealed trait G {
+sealed trait GCommand {
   def print: String
 }
 
-case class G_Unknown(raw: String) extends G {
-  def print: String = raw
+case class GCommandCoordinate(coordinate: String, value: Double) extends GCommand {
+  override def print: String = s"$coordinate${String.format(Locale.US, "%.3f", value)}"
 }
 
-case class G_Planar_Motion(
-    index: Int,
-    x: Double,
-    y: Double,
-    z: Option[Double],
-    f: Option[Double],
-    tail: Option[String] = None
-) extends G {
-  def print: String =
-    (
-      List(
-        s"G${String.format("%02d", index)}",
-        s"X${String.format(Locale.US, "%.3f", x)}",
-        s"Y${String.format(Locale.US, "%.3f", y)}"
-      ) ++
-      z.map(z => s"Z${String.format(Locale.US, "%.3f", z)}").toList ++
-      f.map(f => s"F${String.format(Locale.US, "%.3f", f)}").toList ++
-      tail.toList
-    ).mkString(" ")
+case class GCommandMotion(index: Int)                            extends GCommand {
+  override def print: String = s"G${String.format("%02d", index)}"
 }
 
-case class G_Motion(
-    index: Int,
-    x: Option[Double] = None,
-    y: Option[Double] = None,
-    z: Option[Double] = None,
-    f: Option[Double] = None,
-    tail: Option[String] = None
-) extends G {
-  def print: String =
-    (
-      List(s"G${String.format("%02d", index)}") ++
-      x.map(x => s"X${String.format(Locale.US, "%.3f", x)}").toList ++
-      y.map(y => s"Y${String.format(Locale.US, "%.3f", y)}").toList ++
-      z.map(z => s"Z${String.format(Locale.US, "%.3f", z)}").toList ++
-      f.map(f => s"F${String.format(Locale.US, "%.3f", f)}").toList ++
-      tail.toList
-    ).mkString(" ")
+case class GCommandOther(command: String)                        extends GCommand {
+  override def print: String = command
 }
 
-object G_Motion {
-  val G_Motion_Pattern =
-    """(G([0-9]+))\s*(X([0-9.\-]+))?\s*(Y([0-9.\-]+))?\s*(Z([0-9.\-]+))?\s*(F([0-9.\-]+))?\s*(.+)?""".r
+object GCommand {
+  private val GCommandSyntax = """([A-Z])([0-9\-.]+)""".r
 
-  def apply(
-      index: Int,
-      x: Option[Double] = None,
-      y: Option[Double] = None,
-      z: Option[Double] = None,
-      f: Option[Double] = None,
-      tail: Option[String] = None
-  ): G_Motion = new G_Motion(index, x, y, z, f, tail)
-
-  def parse(s: String): Option[G] =
-    s match {
-      case G_Motion_Pattern(_, index, _, x, _, y, _, z, _, f, tail) =>
-        Some(
-          G_Motion(
-            index = index.toInt,
-            x = Option(x).map(_.toDouble),
-            y = Option(y).map(_.toDouble),
-            z = Option(z).map(_.toDouble),
-            f = Option(f).map(_.toDouble),
-            tail = Option(tail)
-          )
-        )
+  def parse(cmd: String): Either[ParseError, GCommand] =
+    cmd match {
+      case GCommandSyntax(letter, payload) =>
+        letter match {
+          case "X" | "Y" | "Z" | "A" | "I" | "J" | "K" =>
+            Right(GCommandCoordinate(letter, payload.toDouble))
+          case "G" if List(0, 1, 2, 3).contains(payload.toInt) =>
+            Right(GCommandMotion(payload.toInt))
+          case _ =>
+            Right(GCommandOther(cmd))
+        }
       case _ =>
-        None
+        Left(ParseError(cmd, s"Can't parse '$cmd' into a g-code command"))
     }
+}
+
+sealed trait GBlock {
+  def print: String
+}
+
+case class GCommandBlock(commands: List[GCommand] = List.empty) extends GBlock {
+  override def print: String = commands.map(_.print).mkString(" ")
+
+  def coordinateCommands: List[GCommandCoordinate] = commands.collect {
+    case c: GCommandCoordinate => c
+  }
+
+  def motion: Option[GCommandMotion] = commands.collectFirst {
+    case c: GCommandMotion => c
+  }
+}
+
+case class GCommentBlock(text: String)                          extends GBlock {
+  override def print: String = text
+}
+
+case class GEmptyBlock()                          extends GBlock {
+  override def print: String = ""
+}
+
+case class ParseError(payload: String, message: String)
+
+object GBlock {
+  private val Comment = """\(.+\)""".r
+
+  def parse(line: String): Either[ParseError, GBlock] =
+    line match {
+      case Comment() =>
+        Right(GCommentBlock(line))
+      case line if line.trim.isEmpty =>
+        Right(GEmptyBlock())
+      case _ =>
+        line
+          .split(" ")
+          .map(GCommand.parse)
+          .foldLeft[Either[ParseError, GCommandBlock]](Right(GCommandBlock())) { (acc, n) =>
+            for {
+              n <- n
+              acc <- acc
+            } yield acc.copy(commands = acc.commands :+ n)
+          }
+    }
+}
+
+object GParser {
+
+  def parse(lines: Vector[String]): Either[ParseError, Vector[GBlock]] =
+    lines
+      .map(GBlock.parse)
+      .foldLeft[Either[ParseError, Vector[GBlock]]](Right(Vector.empty)) { (acc,n) =>
+        for {
+          n <- n
+          acc <- acc
+        } yield acc :+ n
+      }
+
 }

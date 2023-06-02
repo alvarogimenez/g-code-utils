@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root animated="false" collapsible="true" text="Tool Name" type="TitledPane" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <content>
+        <BorderPane fx:id="content" minHeight="113.0" minWidth="0.0" prefHeight="113.0" prefWidth="296.0">
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+         <children>
+         </children>
+         <right>
+            <VBox alignment="CENTER" maxWidth="25.0" minWidth="25.0" prefHeight="94.0" prefWidth="23.0" spacing="5.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button fx:id="move_up" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0">
+                      <graphic>
+                          <ImageView>
+                              <Image requestedHeight="15" requestedWidth="15" url="@../../../icon/up.png" />
+                          </ImageView>
+                      </graphic>
+                  </Button>
+                  <Button fx:id="delete" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: #eb7967;">
+                      <graphic>
+                          <ImageView>
+                              <Image requestedHeight="15" requestedWidth="15" url="@../../../icon/cross.png" />
+                          </ImageView>
+                      </graphic>
+                  </Button>
+                  <Button fx:id="move_down" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0">
+                      <graphic>
+                          <ImageView>
+                              <Image requestedHeight="15" requestedWidth="15" url="@../../../icon/down.png" />
+                          </ImageView>
+                      </graphic>
+                  </Button>
+               </children></VBox>
+         </right>
+        </BorderPane>
+    </content>
+</fx:root>

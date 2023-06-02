@@ -16,7 +16,9 @@ object Point {
     }
 }
 
-case class Point(x: Double, y: Double) {
+case class Point(x: Double, y: Double) extends Geometry {
+  def boundingBox: BoundingBox = BoundingBox(x,y,x,y)
+
   def rotate(angle: Double, center: Point = Point(0, 0)): Point = {
     val newX = center.x + (x - center.x) * Math.cos(angle) - (y - center.y) * Math
       .sin(angle)

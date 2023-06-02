@@ -13,6 +13,16 @@
          <center>
             <TabPane>
                <tabs>
+                   <Tab closable="false" text="Editor" >
+                       <content>
+                           <fx:include source="Editor.fxml"></fx:include>
+                       </content>
+                       <graphic>
+                           <ImageView>
+                               <Image url="@../../icon/edit.png" requestedWidth="20" requestedHeight="20"/>
+                           </ImageView>
+                       </graphic>
+                   </Tab>
                   <Tab closable="false" text="Alignment" >
                      <content>
                         <fx:include source="AlignTool.fxml"></fx:include>
