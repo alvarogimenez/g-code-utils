@@ -25,13 +25,20 @@
                           </ImageView>
                       </graphic>
                     <items>
-                      <MenuItem fx:id="add_tool_displace" mnemonicParsing="false" text="Displace/Rotate">
+                      <MenuItem fx:id="add_tool_displace" mnemonicParsing="false" text="Displace">
                           <graphic>
                               <ImageView>
                                   <Image requestedHeight="18" requestedWidth="18" url="@../../icon/move.png" />
                               </ImageView>
                           </graphic>
                       </MenuItem>
+                    <MenuItem fx:id="add_tool_rotate" mnemonicParsing="false" text="Rotate">
+                        <graphic>
+                            <ImageView>
+                                <Image requestedHeight="18" requestedWidth="18" url="@../../icon/rotate.png" />
+                            </ImageView>
+                        </graphic>
+                    </MenuItem>
                       <MenuItem fx:id="add_tool_panel" mnemonicParsing="false" text="Panel" >
                           <graphic>
                               <ImageView>

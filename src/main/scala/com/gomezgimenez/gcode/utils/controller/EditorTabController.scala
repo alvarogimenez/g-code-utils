@@ -1,8 +1,8 @@
 package com.gomezgimenez.gcode.utils.controller
 
 import com.gomezgimenez.gcode.utils.components.EditorPlot
-import com.gomezgimenez.gcode.utils.components.editor.{DisplaceTool, Tool}
-import com.gomezgimenez.gcode.utils.model.editor.DisplaceModel
+import com.gomezgimenez.gcode.utils.components.editor.{DisplaceTool, RotateTool, Tool}
+import com.gomezgimenez.gcode.utils.model.editor.{DisplaceModel, RotateModel}
 import com.gomezgimenez.gcode.utils.model.{EditorModel, GlobalModel}
 import com.gomezgimenez.gcode.utils.services.GCodeService
 import javafx.event.ActionEvent
@@ -27,6 +27,7 @@ case class EditorTabController(
   @FXML private var button_open: Button      = _
   @FXML private var button_save_as: Button   = _
   @FXML private var add_tool_displace: MenuItem   = _
+  @FXML private var add_tool_rotate: MenuItem   = _
   @FXML private var add_tool_panel: MenuItem   = _
 
   def initialize(): Unit = {
@@ -35,6 +36,16 @@ case class EditorTabController(
     add_tool_displace.setOnAction((_: ActionEvent) => {
       tools.getChildren.add(DisplaceTool(
         model = DisplaceModel(),
+        onDelete = onToolDelete,
+        onMoveUp = onToolMoveUp,
+        onMoveDown = onToolMoveDown,
+        onChange = onToolChange
+      ))
+    })
+
+    add_tool_rotate.setOnAction((_: ActionEvent) => {
+      tools.getChildren.add(RotateTool(
+        model = RotateModel(),
         onDelete = onToolDelete,
         onMoveUp = onToolMoveUp,
         onMoveDown = onToolMoveDown,
@@ -115,6 +126,14 @@ case class EditorTabController(
           cx = 0,
           cy = 0,
           r = 0)
+      case (acc, n: RotateTool) =>
+        gCodeService.rotateAndDisplace(
+          gCode = acc,
+          dx = 0,
+          dy = 0,
+          cx = n.model.centerX.get(),
+          cy = n.model.centerY.get(),
+          r = Math.toRadians(n.model.angle.get()))
     }
     val previewGeometry = gCodeService.gCodeToSegments(previewData)
     model.previewData.set(previewData)

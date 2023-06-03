@@ -24,7 +24,7 @@ case class DisplaceTool(
   tool.setLocation(Thread.currentThread.getContextClassLoader.getResource("ui/view/editor/Displace.fxml"))
   tool.setController(this)
   content.setCenter(tool.load().asInstanceOf[Pane])
-  setText("Displace/Rotate")
+  setText("Displace")
 
   model.displaceX.addListener(_ => onChange(this))
   model.displaceY.addListener(_ => onChange(this))
