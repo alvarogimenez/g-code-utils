@@ -44,10 +44,11 @@ case class ConfigService() {
     } yield {
       AlignmentFrames(originalFrame, measuredFrame)
     }
-    Configuration(alignmentFrames)
+    Configuration(alignmentFrames, Some(globalModel.lastDirectory.get().getPath))
   }
 
-  def populateModelFromConfig(config: Configuration, globalModel: GlobalModel, alignToolModel: AlignToolModel): Unit =
+  def populateModelFromConfig(config: Configuration, globalModel: GlobalModel, alignToolModel: AlignToolModel): Unit = {
+    config.lastDirectory.foreach(d => globalModel.lastDirectory.set(new File(d)))
     config.alignmentFrames.foreach { f =>
       alignToolModel.originalTopLeftPoint.set(Some(f.originalFrame.topLeft))
       alignToolModel.originalTopRightPoint.set(Some(f.originalFrame.topRight))
@@ -72,4 +73,5 @@ case class ConfigService() {
           bottomRight = alignToolModel.measuredBottomRightPoint.get.get
         )))
     }
+  }
 }

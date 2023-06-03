@@ -3,7 +3,8 @@ package com.gomezgimenez.gcode.utils.entities
 import com.gomezgimenez.gcode.utils.entities.geometry.Frame
 
 case class Configuration(
-    alignmentFrames: Option[AlignmentFrames]
+    alignmentFrames: Option[AlignmentFrames],
+    lastDirectory: Option[String]
 )
 
 case class AlignmentFrames(
