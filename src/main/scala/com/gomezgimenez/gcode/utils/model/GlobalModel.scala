@@ -13,5 +13,7 @@ case class GlobalModel() {
 
   val originalFile          = new SimpleStringProperty()
   val originalGCodeData     = new SimpleObjectProperty[Vector[GBlock]](Vector.empty)
-  val originalGCodeGeometry = new SimpleObjectProperty[Vector[Geometry]](Vector.empty)
+  val originalGCodeGeometry     = new SimpleObjectProperty[Vector[Geometry]](Vector.empty)
+  val editedGCodeData     = new SimpleObjectProperty[Vector[GBlock]](Vector.empty)
+  val editedGCodeGeometry = new SimpleObjectProperty[Vector[Geometry]](Vector.empty)
 }

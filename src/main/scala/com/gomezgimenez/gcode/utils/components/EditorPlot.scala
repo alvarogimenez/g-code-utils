@@ -7,7 +7,7 @@ import javafx.scene.transform.Affine
 
 case class EditorPlot(model: EditorModel, globalModel: GlobalModel) extends GCodePlotBase {
   globalModel.originalGCodeGeometry.addListener(_ => draw())
-  model.previewGeometry.addListener(_ => draw())
+  globalModel.editedGCodeGeometry.addListener(_ => draw())
 
   override def draw(): Unit = {
     val g2d = canvas.getGraphicsContext2D
@@ -17,7 +17,7 @@ case class EditorPlot(model: EditorModel, globalModel: GlobalModel) extends GCod
 
     val boundingBox =
       (globalModel.originalGCodeGeometry.get ++
-      model.previewGeometry.get)
+        globalModel.editedGCodeGeometry.get)
         .map(_.boundingBox)
         .foldLeft(BoundingBox(0, 10, 10, 0))((a, b) => a.greater(b))
         .margin(1)
@@ -37,7 +37,7 @@ case class EditorPlot(model: EditorModel, globalModel: GlobalModel) extends GCod
         g2d.strokeLine(p.x, p.y, p.x, p.y)
     }
     g2d.setStroke(Color.GRAY)
-    model.previewGeometry.get.foreach {
+    globalModel.editedGCodeGeometry.get.foreach {
       case s: Segment =>
         g2d.strokeLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y)
       case p: Point =>

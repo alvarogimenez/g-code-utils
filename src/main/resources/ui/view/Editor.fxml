@@ -24,7 +24,7 @@
                               <Image requestedHeight="24" requestedWidth="24" url="@../../icon/tool.png" />
                           </ImageView>
                       </graphic>
-                    <items>
+                    <items >
                       <MenuItem fx:id="add_tool_displace" mnemonicParsing="false" text="Displace">
                           <graphic>
                               <ImageView>
@@ -39,7 +39,7 @@
                             </ImageView>
                         </graphic>
                     </MenuItem>
-                      <MenuItem fx:id="add_tool_panel" mnemonicParsing="false" text="Panel" >
+                      <MenuItem fx:id="add_tool_panel" mnemonicParsing="false" text="Panel">
                           <graphic>
                               <ImageView>
                                   <Image requestedHeight="18" requestedWidth="18" url="@../../icon/matrix.png" />

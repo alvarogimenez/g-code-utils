@@ -90,7 +90,7 @@ case class AlignToolModel(gCodeService: GCodeService, globalModel: GlobalModel) 
           avgRotation <- rotation()
         } yield {
           val gCode = gCodeService.rotateAndDisplace(
-            gCode = globalModel.originalGCodeData.get,
+            gCode = globalModel.editedGCodeData.get,
             dx = avgCenter.x - origCenter.x,
             dy = avgCenter.y - origCenter.y,
             cx = origCenter.x,

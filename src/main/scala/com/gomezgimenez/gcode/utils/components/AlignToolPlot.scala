@@ -10,7 +10,7 @@ import javafx.scene.transform.Affine
 case class AlignToolPlot(model: AlignToolModel, globalModel: GlobalModel) extends GCodePlotBase {
   model.originalFrame.addListener(_ => draw())
   model.measuredFrame.addListener(_ => draw())
-  globalModel.originalGCodeGeometry.addListener(_ => draw())
+  globalModel.editedGCodeGeometry.addListener(_ => draw())
   model.transposedGCodeGeometry.addListener(_ => draw())
 
   override def draw(): Unit = {
@@ -22,7 +22,7 @@ case class AlignToolPlot(model: AlignToolModel, globalModel: GlobalModel) extend
     val boundingBox =
       (model.originalFrame.get.map(_.segments).getOrElse(List.empty) ++
       model.measuredFrame.get.map(_.segments).getOrElse(List.empty) ++
-      globalModel.originalGCodeGeometry.get ++
+      globalModel.editedGCodeGeometry.get ++
       model.transposedGCodeGeometry.get)
         .map(_.boundingBox)
         .foldLeft(BoundingBox(0, 10, 10, 0))((a, b) => a.greater(b))
@@ -50,7 +50,7 @@ case class AlignToolPlot(model: AlignToolModel, globalModel: GlobalModel) extend
     }
 
     g2d.setStroke(Color.CYAN)
-    globalModel.originalGCodeGeometry.get.foreach {
+    globalModel.editedGCodeGeometry.get.foreach {
       case s: Segment =>
         g2d.strokeLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y)
       case p: Point =>

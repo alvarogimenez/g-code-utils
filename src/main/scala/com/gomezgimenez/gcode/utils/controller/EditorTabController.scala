@@ -77,7 +77,7 @@ case class EditorTabController(
       })
     })
 
-    button_save_as.disableProperty().bind(model.previewData.isNotEqualTo(Vector.empty).not())
+    button_save_as.disableProperty().bind(globalModel.editedGCodeData.isNotEqualTo(Vector.empty).not())
     button_save_as.setOnAction((_: ActionEvent) => {
       import javafx.stage.FileChooser
       if (globalModel.originalFile.get != null) {
@@ -86,12 +86,12 @@ case class EditorTabController(
         val fileNameExtension        = file.getName.split("\\.").last
         val fileChooser              = new FileChooser
         fileChooser.setInitialDirectory(file.getParentFile)
-        fileChooser.setInitialFileName(fileNameWithoutExtension + "_transposed" + "." + fileNameExtension)
-        fileChooser.setTitle("Save Transposed G-Code File")
+        fileChooser.setInitialFileName(fileNameWithoutExtension + "_edited" + "." + fileNameExtension)
+        fileChooser.setTitle("Save Edited G-Code File")
         fileChooser.getExtensionFilters.addAll(new ExtensionFilter("G-Code Files", "*.nc", "*.gcode"), new ExtensionFilter("All Files", "*.*"))
         val selectedFile = fileChooser.showSaveDialog(primaryStage)
         if (selectedFile != null) {
-          val gCode = model.previewData.get
+          val gCode = globalModel.editedGCodeData.get
           val bw    = new BufferedWriter(new FileWriter(selectedFile))
           gCode.foreach { line =>
             bw.write(line.print + "\n")
@@ -130,8 +130,8 @@ case class EditorTabController(
     globalModel.loadingText.set(s"""Calculating tools...""")
     recalculatePreview().foreach { case (data, geometry) =>
       Platform.runLater(() => {
-        model.previewData.set(data)
-        model.previewGeometry.set(geometry)
+        globalModel.editedGCodeData.set(data)
+        globalModel.editedGCodeGeometry.set(geometry)
         globalModel.loading.set(false)
       })
     }

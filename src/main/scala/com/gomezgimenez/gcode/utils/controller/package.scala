@@ -50,6 +50,8 @@ package object controller {
                 globalModel.originalFile.set(selectedFile.getAbsolutePath)
                 globalModel.originalGCodeData.set(gCode)
                 globalModel.originalGCodeGeometry.set(gCodeSegments)
+                globalModel.editedGCodeData.set(gCode)
+                globalModel.editedGCodeGeometry.set(gCodeSegments)
                 primaryStage.setTitle(Util.windowTitle(Some(selectedFile.getName)))
                 onSuccess()
                 globalModel.loading.set(false)
