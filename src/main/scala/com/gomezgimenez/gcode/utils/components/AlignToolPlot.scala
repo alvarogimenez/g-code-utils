@@ -25,7 +25,7 @@ case class AlignToolPlot(model: AlignToolModel, globalModel: GlobalModel) extend
       globalModel.editedGCodeGeometry.get ++
       model.transposedGCodeGeometry.get)
         .map(_.boundingBox)
-        .foldLeft(BoundingBox(0, 10, 10, 0))((a, b) => a.greater(b))
+        .foldLeft(BoundingBox(-10, 10, 10, -10))((a, b) => a.greater(b))
         .margin(1)
 
     val sp = pointScale(Point(0, 0), boundingBox)

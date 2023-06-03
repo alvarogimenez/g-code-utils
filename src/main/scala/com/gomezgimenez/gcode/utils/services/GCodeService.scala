@@ -1,7 +1,7 @@
 package com.gomezgimenez.gcode.utils.services
 
 import com.gomezgimenez.gcode.utils.entities._
-import com.gomezgimenez.gcode.utils.entities.geometry.{Geometry, Point, Segment}
+import com.gomezgimenez.gcode.utils.entities.geometry.{ Geometry, Point, Segment }
 import com.gomezgimenez.gcode.utils.model.SegmentsWithPower
 
 import java.io.File
@@ -19,15 +19,16 @@ case class GCodeService() {
     GParser.parse(gCode)
   }
 
-  def rotateAndDisplace(gCode: Vector[GBlock],
-                        cx: Double = 0.0,
-                        cy: Double = 0.0,
-                        r: Double = 0.0,
-                        dx: Double = 0.0,
-                        dy: Double = 0.0,
-                        sx: Double = 1.0,
-                        sy: Double = 1.0
-                       ): Vector[GBlock] =
+  def rotateAndDisplace(
+      gCode: Vector[GBlock],
+      cx: Double = 0.0,
+      cy: Double = 0.0,
+      r: Double = 0.0,
+      dx: Double = 0.0,
+      dy: Double = 0.0,
+      sx: Double = 1.0,
+      sy: Double = 1.0
+  ): Vector[GBlock] =
     gCode
       .foldLeft((Vector.empty[GBlock], GCommandMotion(0), 0.0, 0.0)) {
         case ((segments, motion, lastX, lastY), n) =>
@@ -83,11 +84,45 @@ case class GCodeService() {
               val y = b.coordinateCommands.find(_.coordinate == "Y").map(_.value).getOrElse(lastY)
               val m = b.motion.getOrElse(motion)
 
-              (segments :+ Segment(Point(lastX, lastY), Point(x, y)),m , x, y)
+              (segments :+ Segment(Point(lastX, lastY), Point(x, y)), m, x, y)
             case b: GCommandBlock =>
-              (segments,  b.motion.getOrElse(motion), lastX, lastY)
+              (segments, b.motion.getOrElse(motion), lastX, lastY)
             case _ =>
-              (segments,  motion, lastX, lastY)
+              (segments, motion, lastX, lastY)
+          }
+      }
+      ._1
+
+  def normalize(gCode: Vector[GBlock], command: Boolean, coordinates: Boolean): Vector[GBlock] =
+    gCode
+      .foldLeft((Vector.empty[GBlock], GCommandMotion(0), Option.empty[Double], Option.empty[Double], Option.empty[Double])) {
+        case ((acc, motion, lastX, lastY, lastZ), n) =>
+          n match {
+            case b: GCommandBlock if b.coordinateCommands.nonEmpty =>
+              val x = b.coordinateCommands.find(_.coordinate == "X").map(_.value).orElse(lastX)
+              val y = b.coordinateCommands.find(_.coordinate == "Y").map(_.value).orElse(lastY)
+              val z = b.coordinateCommands.find(_.coordinate == "Z").map(_.value).orElse(lastZ)
+              val m = b.motion.getOrElse(motion)
+
+              val normalizedGBlock =
+                b.copy(
+                  commands =
+                  (if (command) List(m) else b.motion.toList) ++
+                  (if (coordinates) {
+                     x.map(GCommandCoordinate("X", _)).toList ++
+                     y.map(GCommandCoordinate("Y", _)).toList ++
+                     z.map(GCommandCoordinate("Z", _)).toList
+                   } else List.empty[GCommand]) ++
+                  b.commands.filterNot {
+                    case _: GCommandMotion                                                                  => true
+                    case c: GCommandCoordinate if List("X", "Y", "Z").contains(c.coordinate) && coordinates => true
+                    case _                                                                                  => false
+                  })
+              (acc :+ normalizedGBlock, m, x, y, z)
+            case b: GCommandBlock =>
+              (acc :+ b, b.motion.getOrElse(motion), lastX, lastY, lastZ)
+            case b =>
+              (acc :+ b, motion, lastX, lastY, lastZ)
           }
       }
       ._1

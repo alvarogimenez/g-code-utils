@@ -35,7 +35,7 @@ case class PanelTool(
   tool.setController(this)
   content.setCenter(tool.load().asInstanceOf[Pane])
   setText("Panel")
-  tool_image.setImage(new Image("icon/matrix.png", 15, 15, true, true))
+  setImage("icon/matrix.png")
 
   val c = new NumberStringConverter(Locale.ENGLISH, "#.#")
 

@@ -28,7 +28,7 @@ case class MirrorTool(
   tool.setController(this)
   content.setCenter(tool.load().asInstanceOf[Pane])
   setText("Mirror")
-  tool_image.setImage(new Image("icon/mirror-y.png", 15, 15, true, true))
+  setImage("icon/mirror-y.png")
 
   model.mirrorX.addListener(_ => onChange(this))
   model.mirrorY.addListener(_ => onChange(this))

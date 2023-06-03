@@ -31,4 +31,8 @@ trait Tool extends TitledPane {
     move_up.setOnAction((_: ActionEvent) => onMoveUp(this))
     move_down.setOnAction((_: ActionEvent) => onMoveDown(this))
   }
+
+  def setImage(url: String): Unit = {
+    tool_image.setImage(new Image(url, 15, 15, true, true))
+  }
 }

@@ -26,7 +26,7 @@ case class DisplaceTool(
   tool.setController(this)
   content.setCenter(tool.load().asInstanceOf[Pane])
   setText("Displace")
-  tool_image.setImage(new Image("icon/move.png", 15, 15, true, true))
+  setImage("icon/move.png")
 
   model.displaceX.addListener(_ => onChange(this))
   model.displaceY.addListener(_ => onChange(this))

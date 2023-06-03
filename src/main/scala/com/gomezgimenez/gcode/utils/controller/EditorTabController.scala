@@ -1,24 +1,28 @@
 package com.gomezgimenez.gcode.utils.controller
 
 import com.gomezgimenez.gcode.utils.components.EditorPlot
-import com.gomezgimenez.gcode.utils.components.editor.{ DisplaceTool, MirrorTool, PanelTool, RotateTool, Tool }
+import com.gomezgimenez.gcode.utils.components.editor.{DisplaceTool, MirrorTool, NormalizeTool, PanelTool, RotateTool, Tool}
+import com.gomezgimenez.gcode.utils.converters.GBlockStringConverter
 import com.gomezgimenez.gcode.utils.entities.GBlock
 import com.gomezgimenez.gcode.utils.entities.geometry.Geometry
-import com.gomezgimenez.gcode.utils.model.editor.{ DisplaceModel, MirrorModel, PanelModel, RotateModel }
-import com.gomezgimenez.gcode.utils.model.{ EditorModel, GlobalModel }
+import com.gomezgimenez.gcode.utils.model.editor.{DisplaceModel, MirrorModel, NormalizeModel, PanelModel, RotateModel}
+import com.gomezgimenez.gcode.utils.model.{EditorModel, GlobalModel}
 import com.gomezgimenez.gcode.utils.services.GCodeService
 import javafx.application.Platform
+import javafx.beans.binding.Bindings
+import javafx.beans.value.{ChangeListener, ObservableValue}
+import javafx.collections.FXCollections
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
-import javafx.scene.control.{ Button, MenuItem }
-import javafx.scene.layout.{ BorderPane, VBox }
+import javafx.scene.control.{Button, ListView, MenuItem}
+import javafx.scene.layout.{BorderPane, VBox}
 import javafx.stage.FileChooser.ExtensionFilter
 import javafx.stage.Stage
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import java.io.{ BufferedWriter, File, FileWriter }
+import java.io.{BufferedWriter, File, FileWriter}
 import scala.concurrent.Future
-import scala.jdk.CollectionConverters.CollectionHasAsScala
+import scala.jdk.CollectionConverters.{CollectionHasAsScala, IterableHasAsJava}
 
 case class EditorTabController(
     primaryStage: Stage,
@@ -35,9 +39,17 @@ case class EditorTabController(
   @FXML private var add_tool_rotate: MenuItem   = _
   @FXML private var add_tool_panel: MenuItem    = _
   @FXML private var add_tool_mirror: MenuItem   = _
+  @FXML private var add_tool_normalize: MenuItem   = _
+  @FXML private var gcode: ListView[String]   = _
 
   def initialize(): Unit = {
     editor_canvas.setCenter(EditorPlot(model, globalModel))
+
+    gcode.itemsProperty().bind(model.gCode)
+    globalModel.editedGCodeData.addListener { _ =>
+      model.gCodeList.clear()
+      globalModel.editedGCodeData.get().foreach(b => model.gCodeList.add(b.print))
+    }
 
     add_tool_displace.setOnAction((_: ActionEvent) => {
       tools.getChildren.add(
@@ -46,7 +58,7 @@ case class EditorTabController(
           onDelete = onToolDelete,
           onMoveUp = onToolMoveUp,
           onMoveDown = onToolMoveDown,
-          onChange = onToolChange
+          onChange = _ => refresh()
         ))
     })
 
@@ -57,8 +69,9 @@ case class EditorTabController(
           onDelete = onToolDelete,
           onMoveUp = onToolMoveUp,
           onMoveDown = onToolMoveDown,
-          onChange = onToolChange
+          onChange = _ => refresh()
         ))
+      refresh()
     })
 
     add_tool_panel.setOnAction((_: ActionEvent) => {
@@ -68,8 +81,9 @@ case class EditorTabController(
           onDelete = onToolDelete,
           onMoveUp = onToolMoveUp,
           onMoveDown = onToolMoveDown,
-          onChange = onToolChange
+          onChange = _ => refresh()
         ))
+      refresh()
     })
 
     add_tool_mirror.setOnAction((_: ActionEvent) => {
@@ -79,8 +93,21 @@ case class EditorTabController(
           onDelete = onToolDelete,
           onMoveUp = onToolMoveUp,
           onMoveDown = onToolMoveDown,
-          onChange = onToolChange
+          onChange = _ => refresh()
         ))
+      refresh()
+    })
+
+    add_tool_normalize.setOnAction((_: ActionEvent) => {
+      tools.getChildren.add(
+        NormalizeTool(
+          model = NormalizeModel(),
+          onDelete = onToolDelete,
+          onMoveUp = onToolMoveUp,
+          onMoveDown = onToolMoveDown,
+          onChange = _ => refresh()
+        ))
+      refresh()
     })
 
     button_open.setOnAction((_: ActionEvent) => {
@@ -116,7 +143,7 @@ case class EditorTabController(
 
   private def onToolDelete(t: Tool): Unit = {
     tools.getChildren.remove(t)
-    onToolChange(t)
+    refresh()
   }
 
   private def onToolMoveUp(t: Tool): Unit = {
@@ -124,7 +151,7 @@ case class EditorTabController(
     if (index > 0) {
       tools.getChildren.remove(t)
       tools.getChildren.add(index - 1, t)
-      onToolChange(t)
+      refresh()
     }
   }
 
@@ -133,11 +160,11 @@ case class EditorTabController(
     if (index < tools.getChildren.size() - 1) {
       tools.getChildren.remove(t)
       tools.getChildren.add(index + 1, t)
-      onToolChange(t)
+      refresh()
     }
   }
 
-  private def onToolChange(t: Tool): Unit = {
+  private def refresh(): Unit = {
     globalModel.loading.set(true)
     globalModel.loadingText.set(s"""Calculating tools...""")
     recalculatePreview().foreach {
@@ -158,6 +185,12 @@ case class EditorTabController(
           gCodeService.rotateAndDisplace(gCode = acc, dx = n.model.displaceX.get(), dy = n.model.displaceY.get())
         case (acc, n: RotateTool) =>
           gCodeService.rotateAndDisplace(gCode = acc, cx = n.model.centerX.get(), cy = n.model.centerY.get(), r = Math.toRadians(n.model.angle.get()))
+        case (acc, n: NormalizeTool) =>
+          gCodeService.normalize(
+            gCode = acc,
+            command = n.model.normalizeCommands.get(),
+            coordinates = n.model.normalizeCoordinates.get()
+          )
         case (acc, n: PanelTool) =>
           val xRepeat  = n.model.panelXObject.get()
           val yRepeat  = n.model.panelYObject.get()

@@ -53,6 +53,13 @@
                                 </ImageView>
                             </graphic>
                         </MenuItem>
+                        <MenuItem fx:id="add_tool_normalize" mnemonicParsing="false" text="Normalize">
+                            <graphic>
+                                <ImageView>
+                                    <Image requestedHeight="18" requestedWidth="18" smooth="true" url="@../../icon/normalize.png" />
+                                </ImageView>
+                            </graphic>
+                        </MenuItem>
                     </items>
                   </MenuButton>
                     </children>
@@ -90,10 +97,30 @@
         </VBox>
     </right>
     <center>
-        <BorderPane fx:id="editor_canvas" prefHeight="200.0" prefWidth="331.0" BorderPane.alignment="CENTER">
+        <BorderPane prefHeight="200.0" prefWidth="331.0" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding>
+         <center>
+            <TabPane prefHeight="200.0" prefWidth="200.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+              <tabs>
+                <Tab text="Plot">
+                  <content>
+                    <BorderPane fx:id="editor_canvas" BorderPane.alignment="CENTER" />
+                  </content>
+                </Tab>
+                <Tab text="G-Code">
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" minHeight="0.0">
+                           <content>
+                                <ListView fx:id="gcode" />
+                           </content>
+                        </ScrollPane>
+                    </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+         </center>
         </BorderPane>
     </center>
 </BorderPane>

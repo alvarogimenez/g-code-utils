@@ -19,7 +19,7 @@ case class EditorPlot(model: EditorModel, globalModel: GlobalModel) extends GCod
       (globalModel.originalGCodeGeometry.get ++
         globalModel.editedGCodeGeometry.get)
         .map(_.boundingBox)
-        .foldLeft(BoundingBox(0, 10, 10, 0))((a, b) => a.greater(b))
+        .foldLeft(BoundingBox(-10, 10, 10, -10))((a, b) => a.greater(b))
         .margin(1)
 
     val sp = pointScale(Point(0, 0), boundingBox)
