@@ -2,9 +2,10 @@ package com.gomezgimenez.gcode.utils.components.editor
 
 import com.gomezgimenez.gcode.utils.model.editor.DisplaceModel
 import javafx.beans.binding.Bindings
-import javafx.fxml.{ FXML, FXMLLoader }
+import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.control.TextField
-import javafx.scene.layout.{ AnchorPane, BorderPane, Pane }
+import javafx.scene.image.Image
+import javafx.scene.layout.{AnchorPane, BorderPane, Pane}
 import javafx.util.converter.NumberStringConverter
 
 import java.util.Locale
@@ -25,6 +26,7 @@ case class DisplaceTool(
   tool.setController(this)
   content.setCenter(tool.load().asInstanceOf[Pane])
   setText("Displace")
+  tool_image.setImage(new Image("icon/move.png", 15, 15, true, true))
 
   model.displaceX.addListener(_ => onChange(this))
   model.displaceY.addListener(_ => onChange(this))

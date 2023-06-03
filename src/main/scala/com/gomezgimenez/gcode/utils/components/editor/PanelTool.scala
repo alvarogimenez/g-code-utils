@@ -5,6 +5,7 @@ import javafx.beans.binding.Bindings
 import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.control.{Spinner, SpinnerValueFactory, TextField, ToggleButton}
+import javafx.scene.image.Image
 import javafx.scene.layout.Pane
 import javafx.util.converter.NumberStringConverter
 
@@ -34,6 +35,7 @@ case class PanelTool(
   tool.setController(this)
   content.setCenter(tool.load().asInstanceOf[Pane])
   setText("Panel")
+  tool_image.setImage(new Image("icon/matrix.png", 15, 15, true, true))
 
   val c = new NumberStringConverter(Locale.ENGLISH, "#.#")
 

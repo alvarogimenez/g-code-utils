@@ -4,6 +4,7 @@ import javafx.event.ActionEvent
 import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.Node
 import javafx.scene.control.{Button, TitledPane}
+import javafx.scene.image.{Image, ImageView}
 import javafx.scene.layout.BorderPane
 
 trait Tool extends TitledPane {
@@ -16,6 +17,7 @@ trait Tool extends TitledPane {
   @FXML var move_down: Button = _
   @FXML var delete: Button = _
   @FXML var content: BorderPane = _
+  @FXML var tool_image: ImageView = _
 
   val wrapper = new FXMLLoader()
   wrapper.setLocation(Thread.currentThread.getContextClassLoader.getResource("ui/view/editor/Wrapper.fxml"))

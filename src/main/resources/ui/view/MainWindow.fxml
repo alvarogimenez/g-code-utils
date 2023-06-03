@@ -19,7 +19,7 @@
                        </content>
                        <graphic>
                            <ImageView>
-                               <Image url="@../../icon/edit.png" requestedWidth="20" requestedHeight="20"/>
+                               <Image smooth="true" url="@../../icon/edit.png" requestedWidth="20" requestedHeight="20"/>
                            </ImageView>
                        </graphic>
                    </Tab>
@@ -29,7 +29,7 @@
                      </content>
                       <graphic>
                           <ImageView>
-                              <Image url="@../../icon/square.png" requestedWidth="20" requestedHeight="20"/>
+                              <Image smooth="true" url="@../../icon/square.png" requestedWidth="20" requestedHeight="20"/>
                           </ImageView>
                       </graphic>
                   </Tab>
@@ -39,7 +39,7 @@
                        </content>
                        <graphic>
                            <ImageView>
-                               <Image url="@../../icon/flare.png" requestedWidth="20" requestedHeight="20"/>
+                               <Image smooth="true" url="@../../icon/flare.png" requestedWidth="20" requestedHeight="20"/>
                            </ImageView>
                        </graphic>
                    </Tab>

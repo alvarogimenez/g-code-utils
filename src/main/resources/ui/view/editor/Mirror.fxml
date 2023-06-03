@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="145.0" minHeight="76.0" minWidth="0.0" prefHeight="76.0" prefWidth="241.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <opaqueInsets>
+        <Insets />
+    </opaqueInsets>
+    <children>
+        <Label layoutX="14.0" layoutY="14.0" text="Mirror X:" />
+        <ToggleButton fx:id="mirror_x" layoutX="67.0" layoutY="10.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0">
+            <graphic>
+                <ImageView>
+                    <Image requestedHeight="15" requestedWidth="15" smooth="true" url="@../../../icon/mirror-x.png" />
+                </ImageView>
+            </graphic>
+        </ToggleButton>
+      <TextField layoutX="142.0" layoutY="10.0" prefHeight="25.0" prefWidth="92.0" fx:id="x_axis" />
+      <Label layoutX="96.0" layoutY="14.0" text="Axis (Y):" />
+      <Label layoutX="14.0" layoutY="45.0" text="Mirror Y:" />
+      <ToggleButton fx:id="mirror_y" layoutX="67.0" layoutY="41.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0">
+         <graphic>
+            <ImageView>
+               <image>
+                  <Image requestedHeight="15" requestedWidth="15" smooth="true" url="@../../../icon/mirror-y.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </ToggleButton>
+      <TextField fx:id="y_axis" layoutX="142.0" layoutY="41.0" prefHeight="25.0" prefWidth="92.0" />
+      <Label layoutX="96.0" layoutY="45.0" text="Axis (X):" />
+    </children>
+</AnchorPane>

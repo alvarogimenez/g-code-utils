@@ -8,12 +8,12 @@
 
 <BorderPane minHeight="570.0" minWidth="640.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gomezgimenez.gcode.utils.controller.AlignToolTabController">
     <right>
-        <VBox alignment="TOP_CENTER" prefWidth="300.0" spacing="5.0" BorderPane.alignment="CENTER">
+        <VBox alignment="TOP_CENTER" prefWidth="305.0" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
                 <Button fx:id="button_open" mnemonicParsing="false" text="Open G-Code">
                     <graphic>
                         <ImageView>
-                            <Image requestedHeight="24" requestedWidth="24" url="@../../icon/open.png" />
+                            <Image requestedHeight="24" requestedWidth="24" smooth="true" url="@../../icon/open.png" />
                         </ImageView>
                     </graphic>
                 </Button>
@@ -58,7 +58,7 @@
                 <Button fx:id="button_transpose" mnemonicParsing="false" text="Transpose">
                     <graphic>
                         <ImageView>
-                            <Image requestedHeight="24" requestedWidth="24" url="@../../icon/transpose.png" />
+                            <Image requestedHeight="24" requestedWidth="24" smooth="true" url="@../../icon/transpose.png" />
                         </ImageView>
                     </graphic>
                 </Button>
@@ -88,7 +88,7 @@
                 <Button fx:id="button_save_as" mnemonicParsing="false" text="Save As...">
                     <graphic>
                         <ImageView>
-                            <Image requestedHeight="24" requestedWidth="24" url="@../../icon/save.png" />
+                            <Image requestedHeight="24" requestedWidth="24" smooth="true" url="@../../icon/save.png" />
                         </ImageView>
                     </graphic>
                 </Button>

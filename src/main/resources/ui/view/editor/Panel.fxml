@@ -15,7 +15,7 @@
         <ToggleButton layoutX="134.0" layoutY="10.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" fx:id="x_align_left">
             <graphic>
                 <ImageView>
-                    <Image requestedHeight="15" requestedWidth="15" url="@../../../icon/align-left.png" />
+                    <Image smooth="true" requestedHeight="15" requestedWidth="15" url="@../../../icon/align-left.png" />
                 </ImageView>
             </graphic>
              <toggleGroup>
@@ -25,14 +25,14 @@
         <ToggleButton layoutX="169.0" layoutY="10.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" selected="true" toggleGroup="$panel_x" fx:id="x_align_middle">
             <graphic>
                 <ImageView>
-                    <Image requestedHeight="15" requestedWidth="15" url="@../../../icon/align-middle.png" />
+                    <Image smooth="true" requestedHeight="15" requestedWidth="15" url="@../../../icon/align-middle.png" />
                 </ImageView>
             </graphic>
         </ToggleButton>
         <ToggleButton layoutX="202.0" layoutY="10.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" toggleGroup="$panel_x" fx:id="x_align_right">
             <graphic>
                 <ImageView>
-                    <Image requestedHeight="15" requestedWidth="15" url="@../../../icon/align-right.png" />
+                    <Image smooth="true" requestedHeight="15" requestedWidth="15" url="@../../../icon/align-right.png" />
                 </ImageView>
             </graphic>
         </ToggleButton>
@@ -41,7 +41,7 @@
         <ToggleButton fx:id="y_align_top" layoutX="134.0" layoutY="76.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" >
             <graphic>
                 <ImageView>
-                    <Image requestedHeight="15" requestedWidth="15" url="@../../../icon/align-top.png" />
+                    <Image smooth="true" requestedHeight="15" requestedWidth="15" url="@../../../icon/align-top.png" />
                 </ImageView>
             </graphic>
             <toggleGroup>
@@ -51,14 +51,14 @@
         <ToggleButton fx:id="y_align_middle" layoutX="169.0" layoutY="76.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" selected="true" toggleGroup="$panel_y">
             <graphic>
                 <ImageView>
-                    <Image requestedHeight="15" requestedWidth="15" url="@../../../icon/align-middle.png" />
+                    <Image smooth="true" requestedHeight="15" requestedWidth="15" url="@../../../icon/align-middle.png" />
                 </ImageView>
             </graphic>
         </ToggleButton>
         <ToggleButton fx:id="y_align_bottom" layoutX="202.0" layoutY="76.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" toggleGroup="$panel_y">
             <graphic>
                 <ImageView>
-                    <Image requestedHeight="15" requestedWidth="15" url="@../../../icon/align-bottom.png" />
+                    <Image smooth="true" requestedHeight="15" requestedWidth="15" url="@../../../icon/align-bottom.png" />
                 </ImageView>
             </graphic>
         </ToggleButton>

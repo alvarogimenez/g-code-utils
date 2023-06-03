@@ -1,9 +1,10 @@
 package com.gomezgimenez.gcode.utils.components.editor
 
-import com.gomezgimenez.gcode.utils.model.editor.{ DisplaceModel, RotateModel }
+import com.gomezgimenez.gcode.utils.model.editor.{DisplaceModel, RotateModel}
 import javafx.beans.binding.Bindings
-import javafx.fxml.{ FXML, FXMLLoader }
+import javafx.fxml.{FXML, FXMLLoader}
 import javafx.scene.control.TextField
+import javafx.scene.image.Image
 import javafx.scene.layout.Pane
 import javafx.util.converter.NumberStringConverter
 
@@ -26,6 +27,7 @@ case class RotateTool(
   tool.setController(this)
   content.setCenter(tool.load().asInstanceOf[Pane])
   setText("Rotate")
+  tool_image.setImage(new Image("icon/rotate.png", 15, 15, true, true))
 
   model.centerX.addListener(_ => onChange(this))
   model.centerY.addListener(_ => onChange(this))

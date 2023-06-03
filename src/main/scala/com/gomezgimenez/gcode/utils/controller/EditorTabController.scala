@@ -1,22 +1,22 @@
 package com.gomezgimenez.gcode.utils.controller
 
 import com.gomezgimenez.gcode.utils.components.EditorPlot
-import com.gomezgimenez.gcode.utils.components.editor.{DisplaceTool, PanelTool, RotateTool, Tool}
+import com.gomezgimenez.gcode.utils.components.editor.{ DisplaceTool, MirrorTool, PanelTool, RotateTool, Tool }
 import com.gomezgimenez.gcode.utils.entities.GBlock
 import com.gomezgimenez.gcode.utils.entities.geometry.Geometry
-import com.gomezgimenez.gcode.utils.model.editor.{DisplaceModel, PanelModel, RotateModel}
-import com.gomezgimenez.gcode.utils.model.{EditorModel, GlobalModel}
+import com.gomezgimenez.gcode.utils.model.editor.{ DisplaceModel, MirrorModel, PanelModel, RotateModel }
+import com.gomezgimenez.gcode.utils.model.{ EditorModel, GlobalModel }
 import com.gomezgimenez.gcode.utils.services.GCodeService
 import javafx.application.Platform
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
-import javafx.scene.control.{Button, MenuItem}
-import javafx.scene.layout.{BorderPane, VBox}
+import javafx.scene.control.{ Button, MenuItem }
+import javafx.scene.layout.{ BorderPane, VBox }
 import javafx.stage.FileChooser.ExtensionFilter
 import javafx.stage.Stage
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import java.io.{BufferedWriter, File, FileWriter}
+import java.io.{ BufferedWriter, File, FileWriter }
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 
@@ -34,6 +34,7 @@ case class EditorTabController(
   @FXML private var add_tool_displace: MenuItem = _
   @FXML private var add_tool_rotate: MenuItem   = _
   @FXML private var add_tool_panel: MenuItem    = _
+  @FXML private var add_tool_mirror: MenuItem   = _
 
   def initialize(): Unit = {
     editor_canvas.setCenter(EditorPlot(model, globalModel))
@@ -71,6 +72,17 @@ case class EditorTabController(
         ))
     })
 
+    add_tool_mirror.setOnAction((_: ActionEvent) => {
+      tools.getChildren.add(
+        MirrorTool(
+          model = MirrorModel(),
+          onDelete = onToolDelete,
+          onMoveUp = onToolMoveUp,
+          onMoveDown = onToolMoveDown,
+          onChange = onToolChange
+        ))
+    })
+
     button_open.setOnAction((_: ActionEvent) => {
       load(primaryStage, globalModel, gCodeService, () => {
         recalculatePreview()
@@ -88,7 +100,7 @@ case class EditorTabController(
         fileChooser.setInitialDirectory(file.getParentFile)
         fileChooser.setInitialFileName(fileNameWithoutExtension + "_edited" + "." + fileNameExtension)
         fileChooser.setTitle("Save Edited G-Code File")
-        fileChooser.getExtensionFilters.addAll(new ExtensionFilter("G-Code Files", "*.nc", "*.gcode"), new ExtensionFilter("All Files", "*.*"))
+        fileChooser.getExtensionFilters.addAll(new ExtensionFilter("G-Code Files", "*.nc", "*.gCode"), new ExtensionFilter("All Files", "*.*"))
         val selectedFile = fileChooser.showSaveDialog(primaryStage)
         if (selectedFile != null) {
           val gCode = globalModel.editedGCodeData.get
@@ -128,26 +140,27 @@ case class EditorTabController(
   private def onToolChange(t: Tool): Unit = {
     globalModel.loading.set(true)
     globalModel.loadingText.set(s"""Calculating tools...""")
-    recalculatePreview().foreach { case (data, geometry) =>
-      Platform.runLater(() => {
-        globalModel.editedGCodeData.set(data)
-        globalModel.editedGCodeGeometry.set(geometry)
-        globalModel.loading.set(false)
-      })
+    recalculatePreview().foreach {
+      case (data, geometry) =>
+        Platform.runLater(() => {
+          globalModel.editedGCodeData.set(data)
+          globalModel.editedGCodeGeometry.set(geometry)
+          globalModel.loading.set(false)
+        })
     }
   }
 
-  private def recalculatePreview(): Future[(Vector[GBlock], Vector[Geometry])] = {
+  private def recalculatePreview(): Future[(Vector[GBlock], Vector[Geometry])] =
     Future {
-      val gcode = globalModel.originalGCodeData.get
-      val previewData = tools.getChildren.asScala.foldLeft(gcode) {
+      val gCode = globalModel.originalGCodeData.get
+      val previewData = tools.getChildren.asScala.foldLeft(gCode) {
         case (acc, n: DisplaceTool) =>
           gCodeService.rotateAndDisplace(gCode = acc, dx = n.model.displaceX.get(), dy = n.model.displaceY.get())
         case (acc, n: RotateTool) =>
           gCodeService.rotateAndDisplace(gCode = acc, cx = n.model.centerX.get(), cy = n.model.centerY.get(), r = Math.toRadians(n.model.angle.get()))
         case (acc, n: PanelTool) =>
-          val xRepeat = n.model.panelXObject.get()
-          val yRepeat = n.model.panelYObject.get()
+          val xRepeat  = n.model.panelXObject.get()
+          val yRepeat  = n.model.panelYObject.get()
           val xSpacing = n.model.spacingX.get()
           val ySpacing = n.model.spacingY.get()
 
@@ -161,7 +174,6 @@ case class EditorTabController(
             else if (n.model.yAlignBottom.get()) (0, yRepeat - 1)
             else ((yRepeat - 1) / 2, (yRepeat - 1) / 2 + (yRepeat - 1) % 2)
           }
-          println(s"xRepeat = $xRepeat, yRepeat = $yRepeat, negXClones = $negXClones, posXClones = $posXClones")
 
           (-negXClones to posXClones).flatMap { x =>
             (-negYClones to posYClones).flatMap { y =>
@@ -172,9 +184,29 @@ case class EditorTabController(
               )
             }
           }.toVector
+        case (acc, n: MirrorTool) =>
+          val mirrorX = n.model.mirrorX.get()
+          val mirrorY = n.model.mirrorY.get()
+          val xAxis   = n.model.xAxis.get()
+          val yAxis   = n.model.yAxis.get()
+          val sx      = if (mirrorY) -1.0 else 1.0
+          val sy      = if (mirrorX) -1.0 else 1.0
+
+          gCodeService.rotateAndDisplace(
+            gCode = gCodeService.rotateAndDisplace(
+              gCode = gCodeService.rotateAndDisplace(
+                acc,
+                dx = -yAxis,
+                dy = -xAxis
+              ),
+              sx = sx,
+              sy = sy
+            ),
+            dx = yAxis,
+            dy = xAxis
+          )
       }
       val previewGeometry = gCodeService.gCodeToSegments(previewData)
       (previewData, previewGeometry)
     }
-  }
 }

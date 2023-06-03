@@ -49,7 +49,7 @@ case class AlignToolPlot(model: AlignToolModel, globalModel: GlobalModel) extend
       }
     }
 
-    g2d.setStroke(Color.CYAN)
+    g2d.setStroke(Color.GRAY)
     globalModel.editedGCodeGeometry.get.foreach {
       case s: Segment =>
         g2d.strokeLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y)
