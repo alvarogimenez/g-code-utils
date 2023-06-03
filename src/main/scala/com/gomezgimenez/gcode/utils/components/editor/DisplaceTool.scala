@@ -19,7 +19,6 @@ case class DisplaceTool(
 
   @FXML private var displace_x: TextField = _
   @FXML private var displace_y: TextField = _
-  @FXML private var rotate: TextField     = _
 
   val tool = new FXMLLoader()
   tool.setLocation(Thread.currentThread.getContextClassLoader.getResource("ui/view/editor/Displace.fxml"))
@@ -29,11 +28,9 @@ case class DisplaceTool(
 
   model.displaceX.addListener(_ => onChange(this))
   model.displaceY.addListener(_ => onChange(this))
-  model.rotate.addListener(_ => onChange(this))
 
   val c = new NumberStringConverter(Locale.ENGLISH, "#.#")
 
   Bindings.bindBidirectional(displace_x.textProperty(), model.displaceX, c)
   Bindings.bindBidirectional(displace_y.textProperty(), model.displaceY, c)
-  Bindings.bindBidirectional(rotate.textProperty(), model.rotate, c)
 }

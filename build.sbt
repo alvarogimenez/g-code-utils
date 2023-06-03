@@ -10,6 +10,7 @@ lazy val `g-code-utils` = (project in file("."))
     mainClass in assembly := Some("Main"),
     libraryDependencies ++= List(
       json4s,
-      scalaTest % Test
+      scalaTest % Test,
+      "org.apache.commons" % "commons-math" % "2.2"
     )
   )

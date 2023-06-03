@@ -1,7 +1,6 @@
-package com.gomezgimenez.gcode.utils.entities
+package com.gomezgimenez.gcode.utils.entities.geometry
 
 import java.util.Locale
-
 import scala.util.Try
 
 object Point {

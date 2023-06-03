@@ -1,4 +1,4 @@
-package com.gomezgimenez.gcode.utils.entities
+package com.gomezgimenez.gcode.utils.entities.geometry
 
 case class Segment(p1: Point, p2: Point) extends Geometry {
   def boundingBox: BoundingBox =

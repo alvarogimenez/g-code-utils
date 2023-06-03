@@ -1,6 +1,6 @@
 package com.gomezgimenez.gcode.utils.components
 
-import com.gomezgimenez.gcode.utils.entities.{ BoundingBox, Point, Segment }
+import com.gomezgimenez.gcode.utils.entities.geometry.{BoundingBox, Point, Segment}
 import com.gomezgimenez.gcode.utils.model.{ AlignToolModel, GlobalModel }
 import javafx.scene.canvas.{ Canvas, GraphicsContext }
 import javafx.scene.layout.{ Border, BorderStroke, BorderStrokeStyle, Pane }

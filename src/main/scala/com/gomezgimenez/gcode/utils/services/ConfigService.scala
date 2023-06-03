@@ -1,8 +1,9 @@
 package com.gomezgimenez.gcode.utils.services
 
+import com.gomezgimenez.gcode.utils.entities.geometry.Frame
 import java.io.{ BufferedWriter, File, FileWriter }
 
-import com.gomezgimenez.gcode.utils.entities.{ AlignmentFrames, Configuration, Frame }
+import com.gomezgimenez.gcode.utils.entities.{ AlignmentFrames, Configuration }
 import com.gomezgimenez.gcode.utils.model.{ AlignToolModel, GlobalModel }
 import org.json4s.{ Formats, NoTypeHints }
 import org.json4s.native.Serialization

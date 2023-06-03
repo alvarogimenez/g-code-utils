@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane minHeight="113.0" minWidth="0.0" prefHeight="113.0" prefWidth="241.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane minHeight="81.0" minWidth="0.0" prefHeight="81.0" prefWidth="241.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
     <opaqueInsets>
         <Insets />
     </opaqueInsets>
@@ -13,7 +13,5 @@
         <TextField fx:id="displace_x" layoutX="70.0" layoutY="10.0" prefHeight="25.0" prefWidth="162.0" />
         <TextField fx:id="displace_y" layoutX="70.0" layoutY="45.0" prefHeight="25.0" prefWidth="162.0" />
         <Label layoutX="14.0" layoutY="49.0" text="Y:" />
-        <Label layoutX="14.0" layoutY="84.0" text="Rotate:" />
-        <TextField fx:id="rotate" layoutX="70.0" layoutY="80.0" prefHeight="25.0" prefWidth="162.0" />
     </children>
 </AnchorPane>

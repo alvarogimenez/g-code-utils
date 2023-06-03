@@ -5,7 +5,7 @@ import java.io.{ BufferedWriter, File, FileWriter }
 import com.gomezgimenez.gcode.utils.Util
 import com.gomezgimenez.gcode.utils.components.AlignToolPlot
 import com.gomezgimenez.gcode.utils.converters.PointStringConverter
-import com.gomezgimenez.gcode.utils.entities.Frame
+import com.gomezgimenez.gcode.utils.entities.geometry.Frame
 import com.gomezgimenez.gcode.utils.model.{ AlignToolModel, GlobalModel }
 import com.gomezgimenez.gcode.utils.services.{ ConfigService, GCodeService }
 import javafx.application.Platform
@@ -46,7 +46,6 @@ case class AlignToolTabController(
   @FXML var button_transpose: Button = _
   @FXML var label_center: Label      = _
 
-  @FXML var label_rotation_std_deviation: Label = _
   @FXML var label_rotation: Label = _
 
   def initialize(): Unit = {
@@ -63,7 +62,6 @@ case class AlignToolTabController(
 
     label_center.textProperty().bindBidirectional(model.calculatedCenter, new PointStringConverter)
     label_rotation.textProperty().bindBidirectional(model.calculatedRotation, new NumberStringConverter())
-    label_rotation_std_deviation.textProperty().bindBidirectional(model.calculatedRotationStdDeviation, new NumberStringConverter())
 
     button_open.setOnAction((_: ActionEvent) => {
       load(primaryStage, globalModel, gCodeService, () => {

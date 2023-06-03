@@ -1,6 +1,6 @@
 package com.gomezgimenez.gcode.utils
 
-import com.gomezgimenez.gcode.utils.entities.Segment
+import com.gomezgimenez.gcode.utils.entities.geometry.Segment
 
 package object model {
   sealed trait Orientation

@@ -1,6 +1,7 @@
 package com.gomezgimenez.gcode.utils.services
 
 import com.gomezgimenez.gcode.utils.entities._
+import com.gomezgimenez.gcode.utils.entities.geometry.{Geometry, Point, Segment}
 import com.gomezgimenez.gcode.utils.model.SegmentsWithPower
 
 import java.io.File
@@ -18,7 +19,7 @@ case class GCodeService() {
     GParser.parse(gCode)
   }
 
-  def transformGCode(gCode: Vector[GBlock], dx: Double, dy: Double, r: Double): Vector[GBlock] =
+  def rotateAndDisplace(gCode: Vector[GBlock],  cx: Double, cy: Double, r: Double, dx: Double, dy: Double): Vector[GBlock] =
     gCode
       .foldLeft((Vector.empty[GBlock], GCommandMotion(0), 0.0, 0.0)) {
         case ((segments, motion, lastX, lastY), n) =>
@@ -29,7 +30,7 @@ case class GCodeService() {
               val i = b.coordinateCommands.find(_.coordinate == "I").map(_.value).getOrElse(0.0)
               val j = b.coordinateCommands.find(_.coordinate == "J").map(_.value).getOrElse(0.0)
 
-              val pxy = Point(x, y).rotate(r, Point(dx, dy)).translate(dx, dy)
+              val pxy = Point(x, y).rotate(r, Point(cx, cy)).translate(dx, dy)
               val pij = Point(i, j).rotate(r)
 
               val updatedAbsoluteCoordinates =

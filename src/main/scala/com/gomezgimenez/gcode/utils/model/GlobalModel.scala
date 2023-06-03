@@ -1,6 +1,7 @@
 package com.gomezgimenez.gcode.utils.model
 
-import com.gomezgimenez.gcode.utils.entities.{ GBlock, Geometry }
+import com.gomezgimenez.gcode.utils.entities.GBlock
+import com.gomezgimenez.gcode.utils.entities.geometry.Geometry
 import javafx.beans.property.{ SimpleBooleanProperty, SimpleObjectProperty, SimpleStringProperty }
 
 import java.io.File

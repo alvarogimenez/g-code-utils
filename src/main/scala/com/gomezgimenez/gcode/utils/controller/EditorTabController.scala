@@ -24,10 +24,8 @@ case class EditorTabController(
 
   @FXML private var tools: VBox = _
   @FXML private var editor_canvas: BorderPane = _
-
   @FXML private var button_open: Button      = _
   @FXML private var button_save_as: Button   = _
-
   @FXML private var add_tool_displace: MenuItem   = _
   @FXML private var add_tool_panel: MenuItem   = _
 
@@ -110,11 +108,13 @@ case class EditorTabController(
     val gcode = globalModel.originalGCodeData.get
     val previewData = tools.getChildren.asScala.foldLeft(gcode) {
       case (acc, n: DisplaceTool) =>
-        gCodeService.transformGCode(
-          acc,
-          n.model.displaceX.get(),
-          n.model.displaceY.get(),
-          Math.toRadians(n.model.rotate.get))
+        gCodeService.rotateAndDisplace(
+          gCode = acc,
+          dx = n.model.displaceX.get(),
+          dy = n.model.displaceY.get(),
+          cx = 0,
+          cy = 0,
+          r = 0)
     }
     val previewGeometry = gCodeService.gCodeToSegments(previewData)
     model.previewData.set(previewData)
