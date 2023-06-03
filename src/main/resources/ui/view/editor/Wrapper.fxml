@@ -7,7 +7,7 @@
 
 <fx:root animated="false" collapsible="true" text="Tool Name" type="TitledPane" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
     <content>
-        <BorderPane fx:id="content" minHeight="113.0" minWidth="0.0" prefHeight="113.0" prefWidth="296.0">
+        <BorderPane fx:id="content" minHeight="113.0" minWidth="0.0" prefWidth="296.0">
             <opaqueInsets>
                 <Insets />
             </opaqueInsets>

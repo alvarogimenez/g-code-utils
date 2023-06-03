@@ -19,7 +19,15 @@ case class GCodeService() {
     GParser.parse(gCode)
   }
 
-  def rotateAndDisplace(gCode: Vector[GBlock],  cx: Double, cy: Double, r: Double, dx: Double, dy: Double): Vector[GBlock] =
+  def rotateAndDisplace(gCode: Vector[GBlock],
+                        cx: Double = 0.0,
+                        cy: Double = 0.0,
+                        r: Double = 0.0,
+                        dx: Double = 0.0,
+                        dy: Double = 0.0,
+                        sx: Double = 1.0,
+                        sy: Double = 1.0
+                       ): Vector[GBlock] =
     gCode
       .foldLeft((Vector.empty[GBlock], GCommandMotion(0), 0.0, 0.0)) {
         case ((segments, motion, lastX, lastY), n) =>
@@ -30,8 +38,8 @@ case class GCodeService() {
               val i = b.coordinateCommands.find(_.coordinate == "I").map(_.value).getOrElse(0.0)
               val j = b.coordinateCommands.find(_.coordinate == "J").map(_.value).getOrElse(0.0)
 
-              val pxy = Point(x, y).rotate(r, Point(cx, cy)).translate(dx, dy)
-              val pij = Point(i, j).rotate(r)
+              val pxy = Point(x, y).rotate(r, Point(cx, cy)).translate(dx, dy) * Point(sx, sy)
+              val pij = Point(i, j).rotate(r) * Point(sx, sy)
 
               val updatedAbsoluteCoordinates =
                 if (b.coordinateCommands.exists(c => c.coordinate == "X" || c.coordinate == "Y")) {
