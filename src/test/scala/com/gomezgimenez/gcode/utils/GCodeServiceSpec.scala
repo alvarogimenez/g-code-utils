@@ -59,20 +59,20 @@ class GCodeServiceSpec extends AnyFlatSpec with Matchers {
   it should "transform G2/G3 arcs to geometry" in {
     val geometry = gCodeService.gCodeToSegments(
       GParser.parse(Vector(
-        "G0 X10 Y0",
+        "G1 X10 Y0",
         "G3 X0 Y10 I-10 J0",
         "G3 X-10 Y0 I0 J-10",
         "G3 X0 Y-10 I10 J0",
         "G3 X10 Y0 I0 J10",
-        "G00 X8 Y0",
+        "G1 X8 Y0",
         "G2 X0 Y-8 I-8 J0",
         "G2 X-8 Y0 I0 J8",
         "G2 X0 Y8 I8 J0",
         "G2 X8 Y0 I0 J-8",
-        "G0 X0 Y6",
+        "G1 X0 Y6",
         "G3 X0 Y-6 I0 J-6",
         "G3 X0 Y6 I0 J6",
-        "G0 X0 Y4",
+        "G1 X0 Y4",
         "G2 X0 Y-4 I0 J-4",
         "G2 X0 Y4 I0 J4",
       )).getOrElse(Vector.empty))
