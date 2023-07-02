@@ -1,7 +1,7 @@
 import Dependencies._
 
 ThisBuild / scalaVersion := "2.13.3"
-ThisBuild / version := "1.2.0"
+ThisBuild / version := "1.2.1"
 ThisBuild / organization := "com.gomezgimenez"
 
 lazy val `g-code-utils` = (project in file("."))
