@@ -5,7 +5,7 @@ import java.io.{ BufferedWriter, File, FileWriter }
 import com.gomezgimenez.gcode.utils.Util
 import com.gomezgimenez.gcode.utils.components.AlignToolPlot
 import com.gomezgimenez.gcode.utils.converters.PointStringConverter
-import com.gomezgimenez.gcode.utils.entities.Frame
+import com.gomezgimenez.gcode.utils.entities.geometry.Frame
 import com.gomezgimenez.gcode.utils.model.{ AlignToolModel, GlobalModel }
 import com.gomezgimenez.gcode.utils.services.{ ConfigService, GCodeService }
 import javafx.application.Platform
@@ -46,10 +46,10 @@ case class AlignToolTabController(
   @FXML var button_transpose: Button = _
   @FXML var label_center: Label      = _
 
-  @FXML var label_rotation_std_deviation: Label = _
+  @FXML var label_rotation: Label = _
 
   def initialize(): Unit = {
-    alignment_tool_canvas.setCenter(AlignToolPlot(model))
+    alignment_tool_canvas.setCenter(AlignToolPlot(model, globalModel))
 
     original_frame_top_left.textProperty().bindBidirectional(model.originalTopLeftPoint, new PointStringConverter())
     original_frame_top_right.textProperty().bindBidirectional(model.originalTopRightPoint, new PointStringConverter())
@@ -61,56 +61,20 @@ case class AlignToolTabController(
     measured_frame_bottom_right.textProperty().bindBidirectional(model.measuredBottomRightPoint, new PointStringConverter())
 
     label_center.textProperty().bindBidirectional(model.calculatedCenter, new PointStringConverter)
-    label_rotation_std_deviation.textProperty().bindBidirectional(model.calculatedRotationStdDeviation, new NumberStringConverter())
+    label_rotation.textProperty().bindBidirectional(model.calculatedRotation, new NumberStringConverter())
 
     button_open.setOnAction((_: ActionEvent) => {
-      import javafx.stage.FileChooser
-      val fileChooser = new FileChooser
-      fileChooser.setInitialDirectory(model.lastDirectory.get)
-      fileChooser.setTitle("Open G-Code File")
-      fileChooser.getExtensionFilters.addAll(new ExtensionFilter("G-Code Files", "*.nc", "*.gcode"), new ExtensionFilter("All Files", "*.*"))
-      val selectedFile = fileChooser.showOpenDialog(primaryStage)
-      if (selectedFile != null) {
-        globalModel.loading.set(true)
-        globalModel.loadingText.set(s"""Loading file "${selectedFile.getName}"...""")
-        Future {
-          val gCode         = gCodeService.readGCodeFile(selectedFile)
-          val gCodeSegments = gCodeService.gCodeToSegments(gCode)
-          if (gCodeSegments.nonEmpty) {
-            Platform.runLater(() => {
-              model.lastDirectory.set(new File(selectedFile.getParent))
-              model.originalFile.set(selectedFile.getAbsolutePath)
-              model.originalGCodeData.set(gCode)
-              model.originalGCodeSegments.set(gCodeSegments)
-              model.transposedGCodeSegments.set(Vector.empty)
-              primaryStage.setTitle(Util.windowTitle(Some(selectedFile.getName)))
-              globalModel.loading.set(false)
-            })
-          } else {
-            Platform.runLater(() => {
-              val alert = new Alert(AlertType.ERROR)
-              alert.setTitle("Error loading file")
-              alert.setHeaderText(s"No segments found while loading file '${selectedFile.getName}'.")
-              alert.setContentText(
-                "Please check if the GCode file was generated correctly and is not empty. " +
-                "If you think this is a bug, please submit an issue to: " +
-                "https://github.com/alvarogimenez/g-code-utils/issues")
-
-              alert.showAndWait()
-
-              model.lastDirectory.set(new File(selectedFile.getParent))
-              globalModel.loading.set(false)
-            })
-          }
-        }
-      }
+      load(primaryStage, globalModel, gCodeService, () => {
+        model.transposedGCodeData.set(Vector.empty)
+        model.transposedGCodeGeometry.set(Vector.empty)
+      })
     })
 
     button_save_as.disableProperty().bind(model.transposedGCodeData.isNotEqualTo(List.empty).not())
     button_save_as.setOnAction((_: ActionEvent) => {
       import javafx.stage.FileChooser
-      if (model.originalFile.get != null) {
-        val file                     = new File(model.originalFile.get)
+      if (globalModel.originalFile.get != null) {
+        val file                     = new File(globalModel.originalFile.get)
         val fileNameWithoutExtension = file.getName.split("\\.").dropRight(1).mkString(".")
         val fileNameExtension        = file.getName.split("\\.").last
         val fileChooser              = new FileChooser

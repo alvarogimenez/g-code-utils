@@ -11,7 +11,7 @@
          <children>
             <ImageView fitHeight="73.0" fitWidth="71.0" layoutX="24.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@/icon/favicon.png" />
+                  <Image smooth="true" url="@/icon/favicon.png" />
                </image></ImageView>
             <Button fx:id="close_button" layoutX="314.0" layoutY="196.0" mnemonicParsing="false" text="Close" />
             <Label layoutX="109.0" layoutY="26.0" text="G-Code Utils">

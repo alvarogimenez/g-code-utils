@@ -13,13 +13,23 @@
          <center>
             <TabPane>
                <tabs>
+                   <Tab closable="false" text="Editor" >
+                       <content>
+                           <fx:include source="Editor.fxml"></fx:include>
+                       </content>
+                       <graphic>
+                           <ImageView>
+                               <Image smooth="true" url="@../../icon/edit.png" requestedWidth="20" requestedHeight="20"/>
+                           </ImageView>
+                       </graphic>
+                   </Tab>
                   <Tab closable="false" text="Alignment" >
                      <content>
                         <fx:include source="AlignTool.fxml"></fx:include>
                      </content>
                       <graphic>
                           <ImageView>
-                              <Image url="@../../icon/square.png" requestedWidth="20" requestedHeight="20"/>
+                              <Image smooth="true" url="@../../icon/square.png" requestedWidth="20" requestedHeight="20"/>
                           </ImageView>
                       </graphic>
                   </Tab>
@@ -29,7 +39,7 @@
                        </content>
                        <graphic>
                            <ImageView>
-                               <Image url="@../../icon/flare.png" requestedWidth="20" requestedHeight="20"/>
+                               <Image smooth="true" url="@../../icon/flare.png" requestedWidth="20" requestedHeight="20"/>
                            </ImageView>
                        </graphic>
                    </Tab>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="145.0" minHeight="145.0" minWidth="0.0" prefHeight="145.0" prefWidth="241.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <opaqueInsets>
+        <Insets />
+    </opaqueInsets>
+    <children>
+        <Label layoutX="14.0" layoutY="14.0" text="X:" />
+        <Spinner fx:id="spinner_panel_x" layoutX="31.0" layoutY="10.0" prefHeight="25.0" prefWidth="94.0" />
+        <ToggleButton layoutX="134.0" layoutY="10.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" fx:id="x_align_left">
+            <graphic>
+                <ImageView>
+                    <Image smooth="true" requestedHeight="15" requestedWidth="15" url="@../../../icon/align-left.png" />
+                </ImageView>
+            </graphic>
+             <toggleGroup>
+                <ToggleGroup fx:id="panel_x" />
+             </toggleGroup>
+        </ToggleButton>
+        <ToggleButton layoutX="169.0" layoutY="10.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" selected="true" toggleGroup="$panel_x" fx:id="x_align_middle">
+            <graphic>
+                <ImageView>
+                    <Image smooth="true" requestedHeight="15" requestedWidth="15" url="@../../../icon/align-middle.png" />
+                </ImageView>
+            </graphic>
+        </ToggleButton>
+        <ToggleButton layoutX="202.0" layoutY="10.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" toggleGroup="$panel_x" fx:id="x_align_right">
+            <graphic>
+                <ImageView>
+                    <Image smooth="true" requestedHeight="15" requestedWidth="15" url="@../../../icon/align-right.png" />
+                </ImageView>
+            </graphic>
+        </ToggleButton>
+        <Label layoutX="14.0" layoutY="80.0" text="Y:" />
+        <Spinner fx:id="spinner_panel_y" layoutX="31.0" layoutY="76.0" prefHeight="25.0" prefWidth="94.0" />
+        <ToggleButton fx:id="y_align_top" layoutX="134.0" layoutY="76.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" >
+            <graphic>
+                <ImageView>
+                    <Image smooth="true" requestedHeight="15" requestedWidth="15" url="@../../../icon/align-top.png" />
+                </ImageView>
+            </graphic>
+            <toggleGroup>
+                <ToggleGroup fx:id="panel_y" />
+            </toggleGroup>
+        </ToggleButton>
+        <ToggleButton fx:id="y_align_middle" layoutX="169.0" layoutY="76.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" selected="true" toggleGroup="$panel_y">
+            <graphic>
+                <ImageView>
+                    <Image smooth="true" requestedHeight="15" requestedWidth="15" url="@../../../icon/align-middle.png" />
+                </ImageView>
+            </graphic>
+        </ToggleButton>
+        <ToggleButton fx:id="y_align_bottom" layoutX="202.0" layoutY="76.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" toggleGroup="$panel_y">
+            <graphic>
+                <ImageView>
+                    <Image smooth="true" requestedHeight="15" requestedWidth="15" url="@../../../icon/align-bottom.png" />
+                </ImageView>
+            </graphic>
+        </ToggleButton>
+      <Label layoutX="62.0" layoutY="45.0" text="Spacing (X):" />
+      <TextField fx:id="spacing_x" layoutX="134.0" layoutY="41.0" prefHeight="25.0" prefWidth="94.0" />
+
+        <Label layoutX="64.0" layoutY="112.0" text="Spacing (Y):" />
+        <TextField fx:id="spacing_y" layoutX="134.0" layoutY="108.0" prefHeight="25.0" prefWidth="94.0" />
+    </children>
+</AnchorPane>

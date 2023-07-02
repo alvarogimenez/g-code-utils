@@ -1,66 +1,190 @@
 package com.gomezgimenez.gcode.utils.services
 
-import java.io.File
-import java.util.Locale
-
-import com.gomezgimenez.gcode.utils.entities.{ G, G_Motion, G_Planar_Motion, G_Unknown, Point, Segment }
+import com.gomezgimenez.gcode.utils.entities._
+import com.gomezgimenez.gcode.utils.entities.geometry._
 import com.gomezgimenez.gcode.utils.model.SegmentsWithPower
 
+import java.io.File
+import java.util.Locale
 import scala.io.Source
 
 case class GCodeService() {
-  def readGCodeFile(file: File): Vector[G] = {
+  def readGCodeFile(file: File): Either[ParseError, Vector[GBlock]] = {
     val source = Source.fromFile(file)
     val gCode =
       source
         .getLines()
         .toVector
     source.close()
-    parseGCodeLines(gCode)
+    GParser.parse(gCode)
   }
 
-  def parseGCodeLines(lines: Vector[String]): Vector[G] =
-    fillPlanarCoordinates(lines.map { cmd =>
-      G_Motion.parse(cmd).fold[G](G_Unknown(cmd))(identity)
-    })
-
-  def fillPlanarCoordinates(gCode: Vector[G]): Vector[G] =
+  def rotateAndDisplace(
+      gCode: Vector[GBlock],
+      cx: Double = 0.0,
+      cy: Double = 0.0,
+      r: Double = 0.0,
+      dx: Double = 0.0,
+      dy: Double = 0.0,
+      sx: Double = 1.0,
+      sy: Double = 1.0
+  ): Vector[GBlock] =
     gCode
-      .foldLeft((Vector.empty[G], 0.0, 0.0)) {
-        case ((acc, lastX, lastY), n: G_Motion) if n.x.isDefined || n.y.isDefined =>
-          val x = n.x.getOrElse(lastX)
-          val y = n.y.getOrElse(lastY)
-          (acc :+ G_Planar_Motion(n.index, x, y, n.z, n.f, n.tail), x, y)
-        case ((acc, lastX, lastY), n) =>
-          (acc :+ n, lastX, lastY)
+      .foldLeft((Vector.empty[GBlock], GCommandMotion(0), 0.0, 0.0)) {
+        case ((segments, motion, lastX, lastY), n) =>
+          n match {
+            case b: GCommandBlock if b.coordinateCommands.nonEmpty =>
+              val x = b.coordinateCommands.find(_.coordinate == "X").map(_.value).getOrElse(lastX)
+              val y = b.coordinateCommands.find(_.coordinate == "Y").map(_.value).getOrElse(lastY)
+              val i = b.coordinateCommands.find(_.coordinate == "I").map(_.value).getOrElse(0.0)
+              val j = b.coordinateCommands.find(_.coordinate == "J").map(_.value).getOrElse(0.0)
+
+              val pxy = Point(x, y).rotate(r, Point(cx, cy)).translate(dx, dy) * Point(sx, sy)
+              val pij = Point(i, j).rotate(r) * Point(sx, sy)
+
+              val updatedAbsoluteCoordinates =
+                if (b.coordinateCommands.exists(c => c.coordinate == "X" || c.coordinate == "Y")) {
+                  List(
+                    GCommandCoordinate("X", pxy.x),
+                    GCommandCoordinate("Y", pxy.y),
+                  )
+                } else List.empty
+
+              val updatedRelativeCoordinates =
+                if (b.coordinateCommands.exists(c => c.coordinate == "I" || c.coordinate == "J")) {
+                  List(
+                    GCommandCoordinate("I", pij.x),
+                    GCommandCoordinate("J", pij.y),
+                  )
+                } else List.empty
+
+              val updatedCommands =
+              b.commands
+                .filterNot {
+                  case x: GCommandCoordinate =>
+                    List("X", "Y", "I", "J").contains(x.coordinate)
+                  case _ =>
+                    false
+                } ++ updatedAbsoluteCoordinates ++ updatedRelativeCoordinates
+
+              (segments :+ b.copy(commands = updatedCommands), motion, x, y)
+            case b =>
+              (segments :+ b, motion, lastX, lastY)
+          }
       }
       ._1
 
-  def transformGCode(gCode: Vector[G], dx: Double, dy: Double, r: Double): Vector[G] =
-    gCode.map {
-      case g: G_Planar_Motion =>
-        val p = Point(g.x, g.y)
-          .rotate(r, Point(dx, dy))
-          .translate(dx, dy)
-        g.copy(x = p.x, y = p.y)
-      case other => other
-    }
+  def gCodeToSegments(gCode: Vector[GBlock], x: Double = 0, y: Double = 0): Vector[Geometry] =
+    gCode
+      .foldLeft((Vector.empty[Geometry], GCommandMotion(0), x, y)) {
+        case ((segments, motion, lastX, lastY), n) =>
+          n match {
+            case b: GCommandBlock if b.coordinateCommands.nonEmpty =>
+              val x = b.coordinateCommands.find(_.coordinate == "X").map(_.value).getOrElse(lastX)
+              val y = b.coordinateCommands.find(_.coordinate == "Y").map(_.value).getOrElse(lastY)
+              val i = b.coordinateCommands.find(_.coordinate == "I").map(_.value)
+              val j = b.coordinateCommands.find(_.coordinate == "J").map(_.value)
+              val r = b.coordinateCommands.find(_.coordinate == "R").map(_.value)
+              val m = b.motion.getOrElse(motion)
 
-  def gCodeToSegments(gCode: Vector[G]): Vector[Segment] = {
-    val gCodePoints =
-      gCode.collect {
-        case g: G_Planar_Motion => Point(g.x, g.y)
+              val g: Geometry = m match {
+                case GCommandMotion(0) =>
+                  Segment(Point(lastX, lastY), Point(x, y), dotted = true)
+                case GCommandMotion(0) =>
+                  Segment(Point(lastX, lastY), Point(x, y))
+                case GCommandMotion(index) if index == 2 || index == 3 =>
+                  val offsetMode = i.flatMap(i => j.map((i, _)))
+                  val radiusMode = r
+                  offsetMode
+                    .map {
+                      case (i, j) =>
+                        val from   = Point(lastX, lastY)
+                        val ij     = Point(i, j)
+                        val to     = Point(x, y)
+                        val center = from + ij
+                        val radius = ij.length()
+                        val s1     = from - center
+                        val s2     = to - center
+                        val start  = -Math.atan2(s1.y, s1.x)
+                        val startAngle = Math.toDegrees(if(start < 0) start + Math.PI*2 else start)
+                        val ccw    = Math.atan2(s1.x * s2.y - s1.y * s2.x, s1.x * s2.x + s1.y * s2.y)
+                        val ccwAngle = Math.toDegrees(if (ccw < 0) ccw + Math.PI * 2 else ccw)
+                        val cw = Math.atan2(s1.y, s1.x) - Math.atan2(s2.y, s2.x)
+                        val cwAngle = Math.toDegrees(if (cw < 0) cw + Math.PI * 2 else cw)
+
+                        val (s, l) =
+                          if (index == 2) {
+                            (startAngle, cwAngle)
+                          } else {
+                            (startAngle - ccwAngle, ccwAngle)
+                          }
+
+                        /*println(s"${b.print}, " +
+                          s"LAST ($lastX, $lastY), " +
+                          s"s1 = $s1, " +
+                          s"s2 = $s2, " +
+                          s"C = $center, " +
+                          s"startAngle = $startAngle, " +
+                          s"cw = $cwAngle, " +
+                          s"ccw = $ccwAngle, " +
+                          s"s = $s, " +
+                          s"len = $l"
+                        )*/
+
+                        Arc(center, radius, s, l, index)
+                    }
+                    .orElse(radiusMode.map { _ =>
+                      // TODO: Arc radius mode is not supported
+                      Segment(Point(lastX, lastY), Point(x,y))
+                    })
+                    .getOrElse(Segment(Point(lastX, lastY), Point(x, y)))
+                case GCommandMotion(2) =>
+                  Segment(Point(lastX, lastY), Point(x, y))
+                case _ =>
+                  Segment(Point(lastX, lastY), Point(x, y))
+              }
+              (segments :+ g, m, x, y)
+            case b: GCommandBlock =>
+              (segments, b.motion.getOrElse(motion), lastX, lastY)
+            case _ =>
+              (segments, motion, lastX, lastY)
+          }
       }
-    if (gCodePoints.size >= 2) {
-      gCodePoints
-        .drop(2)
-        .foldLeft(Vector(Segment(gCodePoints(0), gCodePoints(1))))(
-          (acc, n) => acc :+ Segment(acc.last.p2, n)
-        )
-    } else {
-      Vector.empty
-    }
-  }
+      ._1
+
+  def normalize(gCode: Vector[GBlock], command: Boolean, coordinates: Boolean): Vector[GBlock] =
+    gCode
+      .foldLeft((Vector.empty[GBlock], GCommandMotion(0), Option.empty[Double], Option.empty[Double], Option.empty[Double])) {
+        case ((acc, motion, lastX, lastY, lastZ), n) =>
+          n match {
+            case b: GCommandBlock if b.coordinateCommands.nonEmpty =>
+              val x = b.coordinateCommands.find(_.coordinate == "X").map(_.value).orElse(lastX)
+              val y = b.coordinateCommands.find(_.coordinate == "Y").map(_.value).orElse(lastY)
+              val z = b.coordinateCommands.find(_.coordinate == "Z").map(_.value).orElse(lastZ)
+              val m = b.motion.getOrElse(motion)
+
+              val normalizedGBlock =
+                b.copy(
+                  commands =
+                  (if (command) List(m) else b.motion.toList) ++
+                  (if (coordinates) {
+                     x.map(GCommandCoordinate("X", _)).toList ++
+                     y.map(GCommandCoordinate("Y", _)).toList ++
+                     z.map(GCommandCoordinate("Z", _)).toList
+                   } else List.empty[GCommand]) ++
+                  b.commands.filterNot {
+                    case _: GCommandMotion                                                                  => true
+                    case c: GCommandCoordinate if List("X", "Y", "Z").contains(c.coordinate) && coordinates => true
+                    case _                                                                                  => false
+                  })
+              (acc :+ normalizedGBlock, m, x, y, z)
+            case b: GCommandBlock =>
+              (acc :+ b, b.motion.getOrElse(motion), lastX, lastY, lastZ)
+            case b =>
+              (acc :+ b, motion, lastX, lastY, lastZ)
+          }
+      }
+      ._1
 
   def segmentsToLaserGCode(
       segmentsByPower: List[SegmentsWithPower],

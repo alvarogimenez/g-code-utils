@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane minHeight="81.0" minWidth="0.0" prefHeight="81.0" prefWidth="241.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <opaqueInsets>
+        <Insets />
+    </opaqueInsets>
+   <children>
+      <CheckBox fx:id="checkbox_commands" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Commands" />
+      <Label layoutX="112.0" layoutY="16.0" text="X0 Y0 → G1 X0 Y0 ">
+         <font>
+            <Font name="Monospaced Bold" size="12.0" />
+         </font></Label>
+      <CheckBox fx:id="checkbox_coordinates" layoutX="14.0" layoutY="46.0" mnemonicParsing="false" text="Coordinates" />
+      <Label layoutX="112.0" layoutY="48.0" text="G1 X0 → G1 X0 Y0 ">
+         <font>
+             <Font name="Monospaced Bold" size="12.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

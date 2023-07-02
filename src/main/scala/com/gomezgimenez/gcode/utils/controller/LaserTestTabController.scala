@@ -5,7 +5,7 @@ import java.lang
 import java.util.Locale
 
 import com.gomezgimenez.gcode.utils.components.LaserTestPlot
-import com.gomezgimenez.gcode.utils.entities.{ Point, Segment }
+import com.gomezgimenez.gcode.utils.entities.geometry.{Point, Segment}
 import com.gomezgimenez.gcode.utils.model._
 import com.gomezgimenez.gcode.utils.services.GCodeService
 import javafx.beans.binding.Bindings

@@ -2,19 +2,18 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
-<BorderPane minHeight="480.0" minWidth="640.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gomezgimenez.gcode.utils.controller.AlignToolTabController">
+<BorderPane minHeight="570.0" minWidth="640.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gomezgimenez.gcode.utils.controller.AlignToolTabController">
     <right>
-        <VBox alignment="TOP_CENTER" prefWidth="300.0" spacing="5.0" BorderPane.alignment="CENTER">
+        <VBox alignment="TOP_CENTER" prefWidth="305.0" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="button_open" mnemonicParsing="false" text="Open G-Code" >
+                <Button fx:id="button_open" mnemonicParsing="false" text="Open G-Code">
                     <graphic>
                         <ImageView>
-                            <Image url="@../../icon/open.png" requestedWidth="24" requestedHeight="24"/>
+                            <Image requestedHeight="24" requestedWidth="24" smooth="true" url="@../../icon/open.png" />
                         </ImageView>
                     </graphic>
                 </Button>
@@ -56,25 +55,25 @@
                         </AnchorPane>
                     </content>
                 </TitledPane>
-                <Button fx:id="button_transpose" mnemonicParsing="false" text="Transpose" >
+                <Button fx:id="button_transpose" mnemonicParsing="false" text="Transpose">
                     <graphic>
                         <ImageView>
-                            <Image url="@../../icon/transpose.png" requestedWidth="24" requestedHeight="24"/>
+                            <Image requestedHeight="24" requestedWidth="24" smooth="true" url="@../../icon/transpose.png" />
                         </ImageView>
                     </graphic>
                 </Button>
                 <TitledPane animated="false" collapsible="false" prefWidth="288.0" text="Calculated data" VBox.vgrow="ALWAYS">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="80.0" prefWidth="286.0">
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="75.0" prefWidth="288.0">
                             <children>
                                 <Label layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="130.0" text="Center:" />
-                                <Label fx:id="label_center" layoutX="164.0" layoutY="14.0" prefHeight="17.0" prefWidth="82.0" text="--">
+                                <Label fx:id="label_center" layoutX="164.0" layoutY="14.0" prefHeight="17.0" prefWidth="114.0" text="--">
                                     <font>
                                         <Font name="System Bold" size="12.0" />
                                     </font>
                                 </Label>
-                                <Label layoutX="14.0" layoutY="42.0" prefHeight="16.0" prefWidth="150.0" text="Rotation Std. Deviation:" wrapText="true" />
-                                <Label fx:id="label_rotation_std_deviation" layoutX="164.0" layoutY="42.0" prefHeight="17.0" prefWidth="82.0" text="--">
+                                <Label layoutX="14.0" layoutY="42.0" prefHeight="17.0" prefWidth="130.0" text="Rotation:" />
+                                <Label fx:id="label_rotation" layoutX="164.0" layoutY="42.0" prefHeight="17.0" prefWidth="82.0" text="--">
                                     <font>
                                         <Font name="System Bold" size="12.0" />
                                     </font>
@@ -86,10 +85,10 @@
                         <Insets />
                     </VBox.margin>
                 </TitledPane>
-                <Button fx:id="button_save_as" mnemonicParsing="false" text="Save As..." >
+                <Button fx:id="button_save_as" mnemonicParsing="false" text="Save As...">
                     <graphic>
                         <ImageView>
-                            <Image url="@../../icon/save.png" requestedWidth="24" requestedHeight="24"/>
+                            <Image requestedHeight="24" requestedWidth="24" smooth="true" url="@../../icon/save.png" />
                         </ImageView>
                     </graphic>
                 </Button>
@@ -100,7 +99,7 @@
         </VBox>
     </right>
     <center>
-        <BorderPane fx:id="alignment_tool_canvas" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <BorderPane fx:id="alignment_tool_canvas" prefHeight="200.0" prefWidth="331.0" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding>

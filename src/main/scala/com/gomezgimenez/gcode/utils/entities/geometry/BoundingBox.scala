@@ -1,4 +1,4 @@
-package com.gomezgimenez.gcode.utils.entities
+package com.gomezgimenez.gcode.utils.entities.geometry
 
 case class BoundingBox(left: Double, top: Double, right: Double, bottom: Double) {
   require(left <= right)

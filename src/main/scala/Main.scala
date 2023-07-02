@@ -1,6 +1,6 @@
 import com.gomezgimenez.gcode.utils.Util
-import com.gomezgimenez.gcode.utils.controller.{ AlignToolTabController, LaserTestTabController, MainWindowController }
-import com.gomezgimenez.gcode.utils.model.{ AlignToolModel, GlobalModel, LaserTestToolModel }
+import com.gomezgimenez.gcode.utils.controller.{ AlignToolTabController, EditorTabController, LaserTestTabController, MainWindowController }
+import com.gomezgimenez.gcode.utils.model.{ AlignToolModel, EditorModel, GlobalModel, LaserTestToolModel }
 import com.gomezgimenez.gcode.utils.services.{ ConfigService, GCodeService }
 import javafx.application.{ Application, Platform }
 import javafx.fxml.FXMLLoader
@@ -13,7 +13,8 @@ class Main extends Application {
   private val gCodeService       = GCodeService()
   private val configService      = ConfigService()
   private val globalModel        = GlobalModel()
-  private val alignToolModel     = AlignToolModel(gCodeService)
+  private val alignToolModel     = AlignToolModel(gCodeService, globalModel)
+  private val editorModel        = EditorModel(gCodeService, globalModel)
   private val laserTestToolModel = LaserTestToolModel()
 
   override def start(primaryStage: Stage): Unit = {
@@ -35,11 +36,13 @@ class Main extends Application {
         AlignToolTabController(primaryStage, gCodeService, globalModel, alignToolModel)
       case c if c == classOf[LaserTestTabController] =>
         LaserTestTabController(primaryStage, gCodeService, globalModel, laserTestToolModel)
+      case c if c == classOf[EditorTabController] =>
+        EditorTabController(primaryStage, gCodeService, globalModel, editorModel)
     })
     loader.setLocation(getClass.getResource("ui/view/MainWindow.fxml"))
 
     val rootLayout = loader.load().asInstanceOf[StackPane]
-    val scene      = new Scene(rootLayout, 800, 600)
+    val scene      = new Scene(rootLayout, 850, 650)
     primaryStage.setScene(scene)
     primaryStage.setTitle(Util.windowTitle())
     primaryStage.setMinWidth(scene.getWidth)

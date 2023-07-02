@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane minHeight="570.0" minWidth="640.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gomezgimenez.gcode.utils.controller.EditorTabController">
+    <right>
+        <VBox fx:id="tools" alignment="TOP_CENTER" prefWidth="305.0" spacing="5.0" BorderPane.alignment="CENTER">
+            <children>
+                <VBox alignment="TOP_CENTER" prefWidth="299.0" spacing="5.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <Button fx:id="button_open" mnemonicParsing="false" text="Open G-Code">
+                            <graphic>
+                                <ImageView>
+                                    <Image requestedHeight="24" requestedWidth="24" smooth="true" url="@../../icon/open.png" />
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                  <MenuButton mnemonicParsing="false" prefHeight="32.0" prefWidth="119.0" text="Add tool...">
+                      <graphic>
+                          <ImageView>
+                              <Image requestedHeight="24" requestedWidth="24" smooth="true" url="@../../icon/tool.png" />
+                          </ImageView>
+                      </graphic>
+                    <items>
+                      <MenuItem fx:id="add_tool_displace" mnemonicParsing="false" text="Displace          ">
+                          <graphic>
+                              <ImageView>
+                                  <Image requestedHeight="18" requestedWidth="18" smooth="true" url="@../../icon/move.png" />
+                              </ImageView>
+                          </graphic>
+                      </MenuItem>
+                    <MenuItem fx:id="add_tool_rotate" mnemonicParsing="false" text="Rotate">
+                        <graphic>
+                            <ImageView>
+                                <Image requestedHeight="18" requestedWidth="18" smooth="true" url="@../../icon/rotate.png" />
+                            </ImageView>
+                        </graphic>
+                    </MenuItem>
+                      <MenuItem fx:id="add_tool_panel" mnemonicParsing="false" text="Panel">
+                          <graphic>
+                              <ImageView>
+                                  <Image requestedHeight="18" requestedWidth="18" smooth="true" url="@../../icon/matrix.png" />
+                              </ImageView>
+                          </graphic>
+                      </MenuItem>
+                        <MenuItem fx:id="add_tool_mirror" mnemonicParsing="false" text="Mirror">
+                            <graphic>
+                                <ImageView>
+                                    <Image requestedHeight="18" requestedWidth="18" smooth="true" url="@../../icon/mirror-y.png" />
+                                </ImageView>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="add_tool_normalize" mnemonicParsing="false" text="Normalize">
+                            <graphic>
+                                <ImageView>
+                                    <Image requestedHeight="18" requestedWidth="18" smooth="true" url="@../../icon/normalize.png" />
+                                </ImageView>
+                            </graphic>
+                        </MenuItem>
+                    </items>
+                  </MenuButton>
+                    </children>
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </padding>
+                </VBox>
+                <ScrollPane hbarPolicy="NEVER" minHeight="0.0" style="-fx-background-color: transparent;">
+                    <content>
+                        <VBox fx:id="tools" alignment="TOP_CENTER" prefWidth="299.0" spacing="5.0" BorderPane.alignment="CENTER">
+                            <children>
+
+                            </children>
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+                <VBox alignment="TOP_CENTER" prefWidth="299.0" spacing="5.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <Button fx:id="button_save_as" mnemonicParsing="false" text="Save As...">
+                            <graphic>
+                                <ImageView>
+                                    <Image requestedHeight="24" requestedWidth="24" smooth="true" url="@../../icon/save.png" />
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </padding>
+                </VBox>
+            </children>
+        </VBox>
+    </right>
+    <center>
+        <BorderPane prefHeight="200.0" prefWidth="331.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+         <center>
+            <TabPane prefHeight="200.0" prefWidth="200.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+              <tabs>
+                <Tab text="Plot">
+                  <content>
+                    <BorderPane fx:id="editor_canvas" BorderPane.alignment="CENTER" />
+                  </content>
+                </Tab>
+                <Tab text="G-Code">
+                    <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" minHeight="0.0">
+                           <content>
+                                <ListView fx:id="gcode" />
+                           </content>
+                        </ScrollPane>
+                    </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+         </center>
+        </BorderPane>
+    </center>
+</BorderPane>

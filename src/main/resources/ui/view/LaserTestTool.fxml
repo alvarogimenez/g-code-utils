@@ -5,15 +5,15 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane minHeight="480.0" minWidth="640.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gomezgimenez.gcode.utils.controller.LaserTestTabController">
+<BorderPane minHeight="480.0" minWidth="640.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gomezgimenez.gcode.utils.controller.LaserTestTabController">
         <right>
-      <BorderPane BorderPane.alignment="CENTER">
+      <BorderPane maxWidth="305.0" minWidth="305.0" prefWidth="305.0" BorderPane.alignment="CENTER">
          <center>
-            <ScrollPane hbarPolicy="NEVER" style="-fx-background-color: transparent;">
+            <ScrollPane hbarPolicy="NEVER" prefWidth="305.0" style="-fx-background-color: transparent;">
                <content>
                         <VBox alignment="TOP_CENTER" spacing="5.0">
                             <padding>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
                             </padding>
                             <children>
                                 <TitledPane animated="false" collapsible="false" text="Configuration">
@@ -70,7 +70,7 @@
                     <Button fx:id="button_save_as" mnemonicParsing="false" text="Save As..." BorderPane.alignment="CENTER">
                         <graphic>
                             <ImageView>
-                                <Image requestedHeight="24" requestedWidth="24" url="@../../icon/save.png" />
+                                <Image requestedHeight="24" requestedWidth="24" smooth="true" url="@../../icon/save.png" />
                             </ImageView>
                         </graphic>
                     </Button>

@@ -1,6 +1,6 @@
 package com.gomezgimenez.gcode.utils.controller
 
-import com.gomezgimenez.gcode.utils.entities.Frame
+import com.gomezgimenez.gcode.utils.entities.geometry.Frame
 import com.gomezgimenez.gcode.utils.model.GlobalModel
 import com.gomezgimenez.gcode.utils.services.{ ConfigService, GCodeService }
 import javafx.application.Platform
@@ -17,11 +17,11 @@ case class MainWindowController(
     model: GlobalModel
 ) {
 
-  @FXML var main_stack: StackPane       = _
-  @FXML var loading_overlay: BorderPane = _
-  @FXML var loading_label: Label        = _
-  @FXML var menu_file_close: MenuItem   = _
-  @FXML var menu_help_about: MenuItem   = _
+  @FXML private var main_stack: StackPane       = _
+  @FXML private var loading_overlay: BorderPane = _
+  @FXML private var loading_label: Label        = _
+  @FXML private var menu_file_close: MenuItem   = _
+  @FXML private var menu_help_about: MenuItem   = _
 
   def initialize(): Unit = {
     loading_overlay.visibleProperty().bind(model.loading)

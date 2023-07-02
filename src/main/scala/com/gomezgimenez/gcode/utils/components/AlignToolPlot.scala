@@ -1,17 +1,15 @@
 package com.gomezgimenez.gcode.utils.components
 
-import com.gomezgimenez.gcode.utils.entities.{ BoundingBox, Point, Segment }
-import com.gomezgimenez.gcode.utils.model.{ AlignToolModel, GlobalModel }
-import javafx.scene.canvas.{ Canvas, GraphicsContext }
-import javafx.scene.layout.{ Border, BorderStroke, BorderStrokeStyle, Pane }
+import com.gomezgimenez.gcode.utils.entities.geometry.{BoundingBox, Point}
+import com.gomezgimenez.gcode.utils.model.{AlignToolModel, GlobalModel}
 import javafx.scene.paint.Color
 import javafx.scene.transform.Affine
 
-case class AlignToolPlot(model: AlignToolModel) extends GCodePlotBase {
+case class AlignToolPlot(model: AlignToolModel, globalModel: GlobalModel) extends GCodePlotBase {
   model.originalFrame.addListener(_ => draw())
   model.measuredFrame.addListener(_ => draw())
-  model.originalGCodeSegments.addListener(_ => draw())
-  model.transposedGCodeSegments.addListener(_ => draw())
+  globalModel.editedGCodeGeometry.addListener(_ => draw())
+  model.transposedGCodeGeometry.addListener(_ => draw())
 
   override def draw(): Unit = {
     val g2d = canvas.getGraphicsContext2D
@@ -22,10 +20,10 @@ case class AlignToolPlot(model: AlignToolModel) extends GCodePlotBase {
     val boundingBox =
       (model.originalFrame.get.map(_.segments).getOrElse(List.empty) ++
       model.measuredFrame.get.map(_.segments).getOrElse(List.empty) ++
-      model.originalGCodeSegments.get ++
-      model.transposedGCodeSegments.get)
+      globalModel.editedGCodeGeometry.get ++
+      model.transposedGCodeGeometry.get)
         .map(_.boundingBox)
-        .foldLeft(BoundingBox(0, 10, 10, 0))((a, b) => a.greater(b))
+        .foldLeft(BoundingBox(-10, 10, 10, -10))((a, b) => a.greater(b))
         .margin(1)
 
     val sp = pointScale(Point(0, 0), boundingBox)
@@ -49,13 +47,9 @@ case class AlignToolPlot(model: AlignToolModel) extends GCodePlotBase {
       }
     }
 
-    g2d.setStroke(Color.CYAN)
-    model.originalGCodeSegments.get.foreach { s =>
-      g2d.strokeLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y)
-    }
+    g2d.setStroke(Color.GRAY)
+    globalModel.editedGCodeGeometry.get.foreach(_.plot(g2d))
     g2d.setStroke(Color.ORANGE)
-    model.transposedGCodeSegments.get.foreach { s =>
-      g2d.strokeLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y)
-    }
+    model.transposedGCodeGeometry.get.foreach(_.plot(g2d))
   }
 }

@@ -1,6 +1,6 @@
 package com.gomezgimenez.gcode.utils.components
 
-import com.gomezgimenez.gcode.utils.entities.{ BoundingBox, Point }
+import com.gomezgimenez.gcode.utils.entities.geometry.{BoundingBox, Point}
 import com.gomezgimenez.gcode.utils.model.LaserTestToolModel
 import javafx.scene.paint.Color
 import javafx.scene.shape.StrokeLineCap
