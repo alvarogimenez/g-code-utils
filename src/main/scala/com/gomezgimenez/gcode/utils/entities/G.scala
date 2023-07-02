@@ -74,7 +74,10 @@ object GBlock {
         Right(GEmptyBlock())
       case _ =>
         line
-          .split(" ")
+          .replaceAll(";.*", "")
+          .split("(?=\\s*[A-Z])")
+          .map(_.trim)
+          .filter(_.nonEmpty)
           .map(GCommand.parse)
           .foldLeft[Either[ParseError, GCommandBlock]](Right(GCommandBlock())) { (acc, n) =>
             for {
