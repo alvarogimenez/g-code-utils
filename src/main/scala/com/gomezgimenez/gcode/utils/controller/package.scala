@@ -16,7 +16,12 @@ package object controller {
   def load(primaryStage: Stage, globalModel: GlobalModel, gCodeService: GCodeService, onSuccess: () => Unit): Future[Unit] = {
     import javafx.stage.FileChooser
     val fileChooser = new FileChooser
-    fileChooser.setInitialDirectory(globalModel.lastDirectory.get)
+    val initialDirectory = if(globalModel.lastDirectory.get.exists()) {
+      globalModel.lastDirectory.get
+    } else {
+      new File(".")
+    }
+    fileChooser.setInitialDirectory(initialDirectory)
     fileChooser.setTitle("Open G-Code File")
     fileChooser.getExtensionFilters.addAll(new ExtensionFilter("G-Code Files", "*.nc", "*.gcode"), new ExtensionFilter("All Files", "*.*"))
     val selectedFile = fileChooser.showOpenDialog(primaryStage)

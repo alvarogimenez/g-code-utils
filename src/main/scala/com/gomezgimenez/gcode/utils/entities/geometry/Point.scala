@@ -1,5 +1,7 @@
 package com.gomezgimenez.gcode.utils.entities.geometry
 
+import javafx.scene.canvas.GraphicsContext
+
 import java.util.Locale
 import scala.util.Try
 
@@ -18,6 +20,8 @@ object Point {
 case class Point(x: Double, y: Double) extends Geometry {
   def boundingBox: BoundingBox = BoundingBox(x,y,x,y)
 
+  def plot(g2d: GraphicsContext): Unit = g2d.strokeLine(x, y, x, y)
+
   def rotate(angle: Double, center: Point = Point(0, 0)): Point = {
     val newX = center.x + (x - center.x) * Math.cos(angle) - (y - center.y) * Math
       .sin(angle)
@@ -25,6 +29,8 @@ case class Point(x: Double, y: Double) extends Geometry {
       .cos(angle)
     Point(newX, newY)
   }
+
+  def length(): Double = Math.sqrt(x*x + y*y)
 
   def translate(_x: Double, _y: Double): Point =
     copy(x = x + _x, y = y + _y)
@@ -37,6 +43,9 @@ case class Point(x: Double, y: Double) extends Geometry {
 
   def +(other: Point): Point =
     Point(x + other.x, y + other.y)
+
+  def -(other: Point): Point =
+    Point(x - other.x, y - other.y)
 
   override def toString: String =
     s"(${String.format(Locale.US, "%.3f", x)},${String.format(Locale.US, "%.3f", y)})"

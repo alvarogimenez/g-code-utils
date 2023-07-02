@@ -1,9 +1,7 @@
 package com.gomezgimenez.gcode.utils.components
 
-import com.gomezgimenez.gcode.utils.entities.geometry.{BoundingBox, Point, Segment}
-import com.gomezgimenez.gcode.utils.model.{ AlignToolModel, GlobalModel }
-import javafx.scene.canvas.{ Canvas, GraphicsContext }
-import javafx.scene.layout.{ Border, BorderStroke, BorderStrokeStyle, Pane }
+import com.gomezgimenez.gcode.utils.entities.geometry.{BoundingBox, Point}
+import com.gomezgimenez.gcode.utils.model.{AlignToolModel, GlobalModel}
 import javafx.scene.paint.Color
 import javafx.scene.transform.Affine
 
@@ -50,18 +48,8 @@ case class AlignToolPlot(model: AlignToolModel, globalModel: GlobalModel) extend
     }
 
     g2d.setStroke(Color.GRAY)
-    globalModel.editedGCodeGeometry.get.foreach {
-      case s: Segment =>
-        g2d.strokeLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y)
-      case p: Point =>
-        g2d.strokeLine(p.x, p.y, p.x, p.y)
-    }
+    globalModel.editedGCodeGeometry.get.foreach(_.plot(g2d))
     g2d.setStroke(Color.ORANGE)
-    model.transposedGCodeGeometry.get.foreach {
-      case s: Segment =>
-        g2d.strokeLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y)
-      case p: Point =>
-        g2d.strokeLine(p.x, p.y, p.x, p.y)
-    }
+    model.transposedGCodeGeometry.get.foreach(_.plot(g2d))
   }
 }

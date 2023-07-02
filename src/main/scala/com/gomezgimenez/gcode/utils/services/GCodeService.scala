@@ -1,7 +1,7 @@
 package com.gomezgimenez.gcode.utils.services
 
 import com.gomezgimenez.gcode.utils.entities._
-import com.gomezgimenez.gcode.utils.entities.geometry.{ Geometry, Point, Segment }
+import com.gomezgimenez.gcode.utils.entities.geometry._
 import com.gomezgimenez.gcode.utils.model.SegmentsWithPower
 
 import java.io.File
@@ -74,17 +74,76 @@ case class GCodeService() {
       }
       ._1
 
-  def gCodeToSegments(gCode: Vector[GBlock]): Vector[Geometry] =
+  def gCodeToSegments(gCode: Vector[GBlock], x: Double = 0, y: Double = 0): Vector[Geometry] =
     gCode
-      .foldLeft((Vector.empty[Geometry], GCommandMotion(0), 0.0, 0.0)) {
+      .foldLeft((Vector.empty[Geometry], GCommandMotion(0), x, y)) {
         case ((segments, motion, lastX, lastY), n) =>
           n match {
             case b: GCommandBlock if b.coordinateCommands.nonEmpty =>
               val x = b.coordinateCommands.find(_.coordinate == "X").map(_.value).getOrElse(lastX)
               val y = b.coordinateCommands.find(_.coordinate == "Y").map(_.value).getOrElse(lastY)
+              val i = b.coordinateCommands.find(_.coordinate == "I").map(_.value)
+              val j = b.coordinateCommands.find(_.coordinate == "J").map(_.value)
+              val r = b.coordinateCommands.find(_.coordinate == "R").map(_.value)
               val m = b.motion.getOrElse(motion)
 
-              (segments :+ Segment(Point(lastX, lastY), Point(x, y)), m, x, y)
+              val g: Geometry = m match {
+                case GCommandMotion(0) =>
+                  Segment(Point(lastX, lastY), Point(x, y), dotted = true)
+                case GCommandMotion(0) =>
+                  Segment(Point(lastX, lastY), Point(x, y))
+                case GCommandMotion(index) if index == 2 || index == 3 =>
+                  val offsetMode = i.flatMap(i => j.map((i, _)))
+                  val radiusMode = r
+                  offsetMode
+                    .map {
+                      case (i, j) =>
+                        val from   = Point(lastX, lastY)
+                        val ij     = Point(i, j)
+                        val to     = Point(x, y)
+                        val center = from + ij
+                        val radius = ij.length()
+                        val s1     = from - center
+                        val s2     = to - center
+                        val start  = -Math.atan2(s1.y, s1.x)
+                        val startAngle = Math.toDegrees(if(start < 0) start + Math.PI*2 else start)
+                        val ccw    = Math.atan2(s1.x * s2.y - s1.y * s2.x, s1.x * s2.x + s1.y * s2.y)
+                        val ccwAngle = Math.toDegrees(if (ccw < 0) ccw + Math.PI * 2 else ccw)
+                        val cw = Math.atan2(s1.y, s1.x) - Math.atan2(s2.y, s2.x)
+                        val cwAngle = Math.toDegrees(if (cw < 0) cw + Math.PI * 2 else cw)
+
+                        val (s, l) =
+                          if (index == 2) {
+                            (startAngle, cwAngle)
+                          } else {
+                            (startAngle - ccwAngle, ccwAngle)
+                          }
+
+                        /*println(s"${b.print}, " +
+                          s"LAST ($lastX, $lastY), " +
+                          s"s1 = $s1, " +
+                          s"s2 = $s2, " +
+                          s"C = $center, " +
+                          s"startAngle = $startAngle, " +
+                          s"cw = $cwAngle, " +
+                          s"ccw = $ccwAngle, " +
+                          s"s = $s, " +
+                          s"len = $l"
+                        )*/
+
+                        Arc(center, radius, s, l, index)
+                    }
+                    .orElse(radiusMode.map { _ =>
+                      // TODO: Arc radius mode is not supported
+                      Segment(Point(lastX, lastY), Point(x,y))
+                    })
+                    .getOrElse(Segment(Point(lastX, lastY), Point(x, y)))
+                case GCommandMotion(2) =>
+                  Segment(Point(lastX, lastY), Point(x, y))
+                case _ =>
+                  Segment(Point(lastX, lastY), Point(x, y))
+              }
+              (segments :+ g, m, x, y)
             case b: GCommandBlock =>
               (segments, b.motion.getOrElse(motion), lastX, lastY)
             case _ =>

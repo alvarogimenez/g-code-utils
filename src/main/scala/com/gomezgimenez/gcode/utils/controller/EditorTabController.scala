@@ -112,7 +112,7 @@ case class EditorTabController(
 
     button_open.setOnAction((_: ActionEvent) => {
       load(primaryStage, globalModel, gCodeService, () => {
-        recalculatePreview()
+        refresh()
       })
     })
 

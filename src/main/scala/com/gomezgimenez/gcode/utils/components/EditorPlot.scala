@@ -1,7 +1,7 @@
 package com.gomezgimenez.gcode.utils.components
 
-import com.gomezgimenez.gcode.utils.entities.geometry.{BoundingBox, Point, Segment}
-import com.gomezgimenez.gcode.utils.model.{AlignToolModel, EditorModel, GlobalModel}
+import com.gomezgimenez.gcode.utils.entities.geometry.{BoundingBox, Point}
+import com.gomezgimenez.gcode.utils.model.{EditorModel, GlobalModel}
 import javafx.scene.paint.Color
 import javafx.scene.transform.Affine
 
@@ -17,7 +17,7 @@ case class EditorPlot(model: EditorModel, globalModel: GlobalModel) extends GCod
 
     val boundingBox =
       (globalModel.originalGCodeGeometry.get ++
-        globalModel.editedGCodeGeometry.get)
+      globalModel.editedGCodeGeometry.get)
         .map(_.boundingBox)
         .foldLeft(BoundingBox(-10, 10, 10, -10))((a, b) => a.greater(b))
         .margin(1)
@@ -30,18 +30,8 @@ case class EditorPlot(model: EditorModel, globalModel: GlobalModel) extends GCod
     drawGrid(g2d, boundingBox)
 
     g2d.setStroke(Color.CYAN)
-    globalModel.originalGCodeGeometry.get.foreach {
-      case s: Segment =>
-        g2d.strokeLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y)
-      case p: Point =>
-        g2d.strokeLine(p.x, p.y, p.x, p.y)
-    }
+    globalModel.originalGCodeGeometry.get.foreach(_.plot(g2d))
     g2d.setStroke(Color.GRAY)
-    globalModel.editedGCodeGeometry.get.foreach {
-      case s: Segment =>
-        g2d.strokeLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y)
-      case p: Point =>
-        g2d.strokeLine(p.x, p.y, p.x, p.y)
-    }
+    globalModel.editedGCodeGeometry.get.foreach(_.plot(g2d))
   }
 }
